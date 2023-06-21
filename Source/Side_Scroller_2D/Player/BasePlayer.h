@@ -4,12 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "PaperCharacter.h"
-#include "PaperFlipbookComponent.h"
 #include "BasePlayer.generated.h"
 
 UCLASS()
-class SIDE_SCROLLER_2D_API ABasePlayer : public ACharacter
+class SIDE_SCROLLER_2D_API ABasePlayer : public APaperCharacter
 {
 	GENERATED_BODY()
 
@@ -21,13 +21,25 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+	void UpdateAnimations(); 
+	void UpdateRotations(); 
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-	
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
-	
+
+
+protected: 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
+		class UPaperFlipbook* m_IdleAnimation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
+		class UPaperFlipbook* m_RunAnimation;
+
+	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite  ,Category = "Camera")
+		class UCameraComponent* m_Camera;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite,  Category = "Camera")
+		USpringArmComponent* m_SpringArmComponent;
 
 };
