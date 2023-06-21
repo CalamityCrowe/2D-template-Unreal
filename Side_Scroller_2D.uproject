@@ -1,13 +1,16 @@
 {
 	"FileVersion": 3,
-	"EngineAssociation": "{A693005A-47B6-177D-51BA-0391DA1F8AEF}",
+	"EngineAssociation": "{86B4BD50-45D0-4739-2D56-A48B5A66FD8A}",
 	"Category": "",
 	"Description": "",
 	"Modules": [
 		{
 			"Name": "Side_Scroller_2D",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"Engine"
+			]
 		}
 	],
 	"Plugins": [
