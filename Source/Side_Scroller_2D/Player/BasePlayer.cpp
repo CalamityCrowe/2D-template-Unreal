@@ -49,6 +49,8 @@ void ABasePlayer::UpdateAnimations()
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared(); // gets the length of the velocity squared
 
 	UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? m_RunAnimation : m_IdleAnimation;
+	DesiredAnimation = (abs(PlayerVelocity.Z) > 0.0f) ? m_JumpAnimation : DesiredAnimation; 
+
 	if (GetSprite()->GetFlipbook() != DesiredAnimation) 
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation); 

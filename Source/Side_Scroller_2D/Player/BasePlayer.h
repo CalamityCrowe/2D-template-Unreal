@@ -36,6 +36,8 @@ protected:
 		class UPaperFlipbook* m_IdleAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
 		class UPaperFlipbook* m_RunAnimation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
+		class UPaperFlipbook* m_JumpAnimation;
 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadWrite  ,Category = "Camera")
 		class UCameraComponent* m_Camera;
