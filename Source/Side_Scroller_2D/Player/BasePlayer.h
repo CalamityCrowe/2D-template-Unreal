@@ -35,9 +35,16 @@ public:
 	void MoveRight(float AxisInput);
 	void CrouchInput();
 	void UnCrouchInput();
-	void Sliding(float X_Force, float upwardScale);
+	void LaunchPlayer(float X, float Vert);
+	void Sliding();
+	void MeleeInput();
 
-	UFUNCTION()
+	void FireProjectile();
+
+
+	UFUNCTION(BlueprintAuthorityOnly)
+		void FinishedAnimation_Attacking();
+	UFUNCTION(BlueprintAuthorityOnly)
 		void FinishedAnimation_Sliding();
 
 protected:
@@ -55,10 +62,14 @@ protected:
 		class UPaperFlipbook* m_AttackAnimation1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
 		class UPaperFlipbook* m_AttackAnimation2;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
+		class UPaperFlipbook* m_AttackAnimationSlide;
 
 
-
-
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+		TSubclassOf<class ABaseProjectile> m_Projectile;
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+		class USphereComponent* m_ProjectileSpawn;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
 		class UCameraComponent* m_Camera;
@@ -66,5 +77,25 @@ protected:
 		USpringArmComponent* m_SpringArmComponent;
 
 	bool isSliding;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack")
+		bool isAttacking;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+		float m_Health;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+		float m_Mana;
+	float m_MaxHealth, m_MaxMana;
+
+
+public:
+	UFUNCTION(BlueprintPure)
+		float HealthPercentage()
+	{
+		return m_Health / m_MaxHealth;
+	}
+	UFUNCTION(BlueprintPure)
+		float ManaPercentage()
+	{
+		return m_Mana / m_MaxMana;
+	}
 };

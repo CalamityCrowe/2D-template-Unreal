@@ -6,6 +6,10 @@
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Side_Scroller_2D/Projectiles/BaseProjectile.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SphereComponent.h"
+
 
 // Sets default values
 ABasePlayer::ABasePlayer()
@@ -27,19 +31,27 @@ ABasePlayer::ABasePlayer()
 	m_SpringArmComponent->SetupAttachment(RootComponent);
 	m_Camera->SetupAttachment(m_SpringArmComponent);
 
-
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
-	SetupAnimationStates();
+	m_ProjectileSpawn = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	m_ProjectileSpawn->SetupAttachment(RootComponent);
 
+	isSliding = false;
+	isAttacking = false;
+
+
+	m_Health = 10;
+	m_Mana = 100; 
+	m_MaxHealth = 100;
+	m_MaxMana = 100;
 }
 
 // Called when the game starts or when spawned
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	SetupAnimationStates();
 
-	//m_Sprites = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Sprites")); 
 
 }
 
@@ -52,6 +64,7 @@ void ABasePlayer::UpdateAnimations()
 	DesiredAnimation = (abs(PlayerVelocity.Z) > 0.0f) ? m_JumpAnimation : DesiredAnimation;
 	DesiredAnimation = (GetCharacterMovement()->IsCrouching()) ? m_CrouchAnimation : DesiredAnimation;
 	DesiredAnimation = (isSliding) ? m_SlideAnimation : DesiredAnimation;
+	DesiredAnimation = (isAttacking) ? m_AttackAnimationSlide : DesiredAnimation;
 
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
@@ -98,7 +111,10 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 		InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
+		InputComponent->BindAction("Fire", IE_Pressed, this, &ABasePlayer::FireProjectile);
 
+
+		InputComponent->BindAction("Melee", IE_Pressed, this, &ABasePlayer::MeleeInput);
 		InputComponent->BindAxis("MoveRight", this, &ABasePlayer::MoveRight);
 
 	}
@@ -110,22 +126,39 @@ void ABasePlayer::SetupAnimationStates()
 {
 	if (GetSprite())
 	{
+
 		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Sliding);
+		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Attacking);
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Finished Adding Dynamics"));
+
 	}
 }
 
 void ABasePlayer::MoveRight(float AxisInput)
 {
-	if (!bIsCrouched)
-		AddMovementInput(FVector(1, 0, 0), AxisInput);
+	if (GetCharacterMovement()->IsCrouching() == false)
+	{
+		if (isAttacking == false)
+		{
+			AddMovementInput(FVector(1, 0, 0), AxisInput);
+		}
+	}
+	else
+	{
+		if (abs(AxisInput) > 0)
+		{
+			UnCrouch();
+			Sliding();
+		}
+	}
 }
 
 void ABasePlayer::CrouchInput()
 {
 
-	if (abs(GetCharacterMovement()->Velocity.X) > 0 && GetCharacterMovement()->IsFalling())
+	if (abs(GetCharacterMovement()->Velocity.X) > 0 && GetCharacterMovement()->IsFalling() == false)
 	{
-		Sliding(1, 0);
+		Sliding();
 	}
 	else
 	{
@@ -142,24 +175,71 @@ void ABasePlayer::UnCrouchInput()
 	}
 }
 
-void ABasePlayer::Sliding(float X_Force, float upwardScale)
+void ABasePlayer::LaunchPlayer(float X, float Vert)
 {
 	float x_Dir = (GetVelocity().X >= 0) ? 1 : -1;
-
-	FVector direction = FVector(x_Dir * X_Force, 0, upwardScale);
+	FVector direction = FVector(x_Dir * X, 0, Vert);
 	LaunchCharacter(direction, false, false);
+
+}
+
+void ABasePlayer::Sliding()
+{
+	LaunchPlayer(1, 1);
 	isSliding = true;
 	GetSprite()->SetLooping(false);
+}
+
+void ABasePlayer::MeleeInput()
+{
+	if (isSliding)
+	{
+		LaunchPlayer(300, 300);
+		isAttacking = true;
+		GetSprite()->SetLooping(false);
+	}
+}
+
+void ABasePlayer::FireProjectile()
+{
+	if (m_Mana)
+	{
+		const FRotator SpawnRotation = GetControlRotation();
+		const FVector SpawnLocation = m_ProjectileSpawn->GetComponentLocation();
+		FActorSpawnParameters spawnParam;
+		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		if (ABaseProjectile* proj = GetWorld()->SpawnActor<ABaseProjectile>(m_Projectile, SpawnLocation, SpawnRotation, spawnParam))
+		{
+			m_Mana -= 10;
+			proj = nullptr;
+		}
+	}
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Sliding"));
 }
 
+void ABasePlayer::FinishedAnimation_Attacking()
+{
+
+	if (isAttacking)
+	{
+		isAttacking = false;
+		isSliding = false;
+		GetSprite()->SetLooping(true);
+		GetSprite()->Play();
+	}
+
+
+}
 void ABasePlayer::FinishedAnimation_Sliding()
 {
-	if (isSliding)
+	if (isSliding && isAttacking == false)
 	{
 		isSliding = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 	}
+
 }
+
+
 
