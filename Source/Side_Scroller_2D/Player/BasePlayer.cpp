@@ -10,7 +10,7 @@
 // Sets default values
 ABasePlayer::ABasePlayer()
 {
- 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
 	m_Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -20,54 +20,56 @@ ABasePlayer::ABasePlayer()
 	m_SpringArmComponent->bEnableCameraLag = true;
 	m_SpringArmComponent->CameraLagSpeed = 5.f;
 	m_SpringArmComponent->SetRelativeRotation(FRotator(0, 0, 270));
-	m_SpringArmComponent->bInheritPitch = false; 
-	m_SpringArmComponent->bInheritYaw = false; 
-	m_SpringArmComponent->bInheritRoll = false; 
+	m_SpringArmComponent->bInheritPitch = false;
+	m_SpringArmComponent->bInheritYaw = false;
+	m_SpringArmComponent->bInheritRoll = false;
 
 	m_SpringArmComponent->SetupAttachment(RootComponent);
-	m_Camera->SetupAttachment(m_SpringArmComponent); 
+	m_Camera->SetupAttachment(m_SpringArmComponent);
 
-	
-	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true; 
-	
+
+	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
+
+	SetupAnimationStates();
+
 }
 
 // Called when the game starts or when spawned
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	//m_Sprites = CreateDefaultSubobject<UPaperFlipbook>(TEXT("Sprites")); 
-
-
 
 }
 
 void ABasePlayer::UpdateAnimations()
 {
-	const FVector PlayerVelocity = GetVelocity(); 
+	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared(); // gets the length of the velocity squared
 
 	UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? m_RunAnimation : m_IdleAnimation;
-	DesiredAnimation = (abs(PlayerVelocity.Z) > 0.0f) ? m_JumpAnimation : DesiredAnimation; 
+	DesiredAnimation = (abs(PlayerVelocity.Z) > 0.0f) ? m_JumpAnimation : DesiredAnimation;
+	DesiredAnimation = (GetCharacterMovement()->IsCrouching()) ? m_CrouchAnimation : DesiredAnimation;
+	DesiredAnimation = (isSliding) ? m_SlideAnimation : DesiredAnimation;
 
-	if (GetSprite()->GetFlipbook() != DesiredAnimation) 
+	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
-		GetSprite()->SetFlipbook(DesiredAnimation); 
+		GetSprite()->SetFlipbook(DesiredAnimation);
 	}
 }
 
 void ABasePlayer::UpdateRotations()
 {
-	if (IsValid(GetController())) 
+	if (IsValid(GetController()))
 	{
-		if (GetVelocity().X > 0) 
+		if (GetVelocity().X > 0)
 		{
-			GetController()->SetControlRotation(FRotator(0, 0, 0)); 
+			GetController()->SetControlRotation(FRotator(0, 0, 0));
 		}
-		if (GetVelocity().X < 0) 
+		if (GetVelocity().X < 0)
 		{
-			GetController()->SetControlRotation(FRotator(0, 180,0));
+			GetController()->SetControlRotation(FRotator(0, 180, 0));
 		}
 	}
 }
@@ -76,8 +78,8 @@ void ABasePlayer::UpdateRotations()
 void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	UpdateAnimations(); 
-	UpdateRotations(); 
+	UpdateAnimations();
+	UpdateRotations();
 
 }
 
@@ -86,5 +88,78 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	if (InputComponent)
+	{
+
+
+		InputComponent->BindAction("Crouch", IE_Pressed, this, &ABasePlayer::CrouchInput);
+		InputComponent->BindAction("Crouch", IE_Released, this, &ABasePlayer::UnCrouchInput);
+
+		InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+		InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
+
+
+		InputComponent->BindAxis("MoveRight", this, &ABasePlayer::MoveRight);
+
+	}
+
+
+}
+
+void ABasePlayer::SetupAnimationStates()
+{
+	if (GetSprite())
+	{
+		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Sliding);
+	}
+}
+
+void ABasePlayer::MoveRight(float AxisInput)
+{
+	if (!bIsCrouched)
+		AddMovementInput(FVector(1, 0, 0), AxisInput);
+}
+
+void ABasePlayer::CrouchInput()
+{
+
+	if (abs(GetCharacterMovement()->Velocity.X) > 0 && GetCharacterMovement()->IsFalling())
+	{
+		Sliding(1, 0);
+	}
+	else
+	{
+		Crouch();
+	}
+
+}
+
+void ABasePlayer::UnCrouchInput()
+{
+	if (GetCharacterMovement()->IsCrouching())
+	{
+		UnCrouch();
+	}
+}
+
+void ABasePlayer::Sliding(float X_Force, float upwardScale)
+{
+	float x_Dir = (GetVelocity().X >= 0) ? 1 : -1;
+
+	FVector direction = FVector(x_Dir * X_Force, 0, upwardScale);
+	LaunchCharacter(direction, false, false);
+	isSliding = true;
+	GetSprite()->SetLooping(false);
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Sliding"));
+}
+
+void ABasePlayer::FinishedAnimation_Sliding()
+{
+	if (isSliding)
+	{
+		isSliding = false;
+		GetSprite()->SetLooping(true);
+		GetSprite()->Play();
+	}
 }
 
