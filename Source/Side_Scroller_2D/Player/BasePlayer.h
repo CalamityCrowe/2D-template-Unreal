@@ -8,6 +8,15 @@
 #include "PaperCharacter.h"
 #include "BasePlayer.generated.h"
 
+UENUM(BlueprintType)
+enum class AttackStates :uint8
+{
+	None UMETA(DisplayName = "None"),
+	Attack1 UMETA(DisplayName = "Attack1"),
+	Attack2 UMETA(DisplayName = "Attack2")
+
+};
+
 UCLASS()
 class SIDE_SCROLLER_2D_API ABasePlayer : public APaperCharacter
 {
@@ -63,7 +72,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
 		class UPaperFlipbook* m_AttackAnimation2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_AttackAnimationSlide;
+		class UPaperFlipbook* m_AttackAnimationSlide;	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
+		class UPaperFlipbook* m_HurtAnimation;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
@@ -86,6 +97,15 @@ protected:
 		float m_Mana;
 	float m_MaxHealth, m_MaxMana;
 
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states")
+		TEnumAsByte<AttackStates> m_CurrentAttack;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states")
+		TEnumAsByte<AttackStates> m_NextAttack;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+		bool isHurt;
+	bool m_HurtAnimate;
 
 public:
 	UFUNCTION(BlueprintPure)

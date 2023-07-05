@@ -40,8 +40,8 @@ ABasePlayer::ABasePlayer()
 	isAttacking = false;
 
 
-	m_Health = 10;
-	m_Mana = 100; 
+	m_Health = 100;
+	m_Mana = 100;
 	m_MaxHealth = 100;
 	m_MaxMana = 100;
 }
@@ -64,7 +64,12 @@ void ABasePlayer::UpdateAnimations()
 	DesiredAnimation = (abs(PlayerVelocity.Z) > 0.0f) ? m_JumpAnimation : DesiredAnimation;
 	DesiredAnimation = (GetCharacterMovement()->IsCrouching()) ? m_CrouchAnimation : DesiredAnimation;
 	DesiredAnimation = (isSliding) ? m_SlideAnimation : DesiredAnimation;
-	DesiredAnimation = (isAttacking) ? m_AttackAnimationSlide : DesiredAnimation;
+	DesiredAnimation = (isAttacking && isSliding) ? m_AttackAnimationSlide : DesiredAnimation;
+	DesiredAnimation = (isAttacking && m_CurrentAttack == AttackStates::Attack1) ? m_AttackAnimation1 : DesiredAnimation;
+	DesiredAnimation = (isAttacking && m_CurrentAttack == AttackStates::Attack2) ? m_AttackAnimation2 : DesiredAnimation;
+	DesiredAnimation = (m_HurtAnimate) ? m_HurtAnimation : DesiredAnimation; 
+
+
 
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
@@ -198,7 +203,29 @@ void ABasePlayer::MeleeInput()
 		isAttacking = true;
 		GetSprite()->SetLooping(false);
 	}
+	else
+	{
+		switch (m_CurrentAttack)
+		{
+		case AttackStates::None:
+			m_NextAttack = AttackStates::Attack1;
+			break;
+		case AttackStates::Attack1:
+			m_NextAttack = AttackStates::Attack2;
+			break;
+		case AttackStates::Attack2:
+			break;
+		}
+		isAttacking = true;
+		GetSprite()->SetLooping(false);
+		if (m_CurrentAttack == AttackStates::None)
+		{
+			m_CurrentAttack = m_NextAttack;
+			m_NextAttack = AttackStates::None;
+		}
+	}
 }
+
 
 void ABasePlayer::FireProjectile()
 {
@@ -220,12 +247,32 @@ void ABasePlayer::FireProjectile()
 void ABasePlayer::FinishedAnimation_Attacking()
 {
 
-	if (isAttacking)
+	if (isAttacking && isSliding)
 	{
 		isAttacking = false;
 		isSliding = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
+	}
+	else if (isAttacking)
+	{
+
+		switch (m_NextAttack)
+		{
+		case AttackStates::None:
+			isAttacking = false;
+			m_CurrentAttack = AttackStates::None;
+			GetSprite()->SetLooping(true);
+			GetSprite()->Play();
+			break;
+		default:
+			m_CurrentAttack = m_NextAttack;
+			m_NextAttack = AttackStates::None;
+			GetSprite()->Play();
+			break;
+
+		}
+
 	}
 
 
