@@ -33,8 +33,12 @@ ABasePlayer::ABasePlayer()
 
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
-	m_ProjectileSpawn = CreateDefaultSubobject<USphereComponent>(TEXT("Collision"));
+	m_ProjectileSpawn = CreateDefaultSubobject<USphereComponent>(TEXT("Projectile Spawn"));
 	m_ProjectileSpawn->SetupAttachment(RootComponent);
+
+	m_AttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collision")); 
+	m_AttackCollision->SetupAttachment(RootComponent); 
+
 
 	isSliding = false;
 	isAttacking = false;
@@ -51,6 +55,8 @@ void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupAnimationStates();
+	m_AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
+	m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
 
 
 }
@@ -67,8 +73,8 @@ void ABasePlayer::UpdateAnimations()
 	DesiredAnimation = (isAttacking && isSliding) ? m_AttackAnimationSlide : DesiredAnimation;
 	DesiredAnimation = (isAttacking && m_CurrentAttack == AttackStates::Attack1) ? m_AttackAnimation1 : DesiredAnimation;
 	DesiredAnimation = (isAttacking && m_CurrentAttack == AttackStates::Attack2) ? m_AttackAnimation2 : DesiredAnimation;
-	DesiredAnimation = (m_HurtAnimate) ? m_HurtAnimation : DesiredAnimation; 
-
+	DesiredAnimation = (m_HurtAnimate) ? m_HurtAnimation : DesiredAnimation;
+	DesiredAnimation = (m_Health <= 0) ? m_DeathAnimation : DesiredAnimation;
 
 
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
@@ -98,6 +104,12 @@ void ABasePlayer::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	UpdateAnimations();
 	UpdateRotations();
+
+	if (m_Health <= 0 && m_PlayDeath) 
+	{
+		m_PlayDeath = false;
+		GetSprite()->SetLooping(false);
+	}
 
 }
 
@@ -134,7 +146,8 @@ void ABasePlayer::SetupAnimationStates()
 
 		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Sliding);
 		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Attacking);
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Finished Adding Dynamics"));
+		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Hurt); 
+		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Finished Adding Dynamics"));
 
 	}
 }
@@ -143,7 +156,7 @@ void ABasePlayer::MoveRight(float AxisInput)
 {
 	if (GetCharacterMovement()->IsCrouching() == false)
 	{
-		if (isAttacking == false)
+		if (isAttacking == false && m_Health > 0)
 		{
 			AddMovementInput(FVector(1, 0, 0), AxisInput);
 		}
@@ -202,6 +215,7 @@ void ABasePlayer::MeleeInput()
 		LaunchPlayer(300, 300);
 		isAttacking = true;
 		GetSprite()->SetLooping(false);
+		m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 	}
 	else
 	{
@@ -222,8 +236,11 @@ void ABasePlayer::MeleeInput()
 		{
 			m_CurrentAttack = m_NextAttack;
 			m_NextAttack = AttackStates::None;
+			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 		}
 	}
+	m_AttackCollision->Activate(); 
 }
 
 
@@ -253,6 +270,8 @@ void ABasePlayer::FinishedAnimation_Attacking()
 		isSliding = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
+		m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
 	}
 	else if (isAttacking)
 	{
@@ -264,11 +283,15 @@ void ABasePlayer::FinishedAnimation_Attacking()
 			m_CurrentAttack = AttackStates::None;
 			GetSprite()->SetLooping(true);
 			GetSprite()->Play();
+			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			break;
 		default:
 			m_CurrentAttack = m_NextAttack;
 			m_NextAttack = AttackStates::None;
 			GetSprite()->Play();
+			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+
 			break;
 
 		}
@@ -285,6 +308,16 @@ void ABasePlayer::FinishedAnimation_Sliding()
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 	}
+
+}
+
+void ABasePlayer::FinishedAnimation_Hurt()
+{
+}
+
+void ABasePlayer::AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Overlapping"));
 
 }
 

@@ -51,10 +51,18 @@ public:
 	void FireProjectile();
 
 
+
+
 	UFUNCTION(BlueprintAuthorityOnly)
 		void FinishedAnimation_Attacking();
 	UFUNCTION(BlueprintAuthorityOnly)
 		void FinishedAnimation_Sliding();
+	UFUNCTION(BlueprintAuthorityOnly)
+		void FinishedAnimation_Hurt();
+
+	UFUNCTION()
+		void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
@@ -75,12 +83,16 @@ protected:
 		class UPaperFlipbook* m_AttackAnimationSlide;	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
 		class UPaperFlipbook* m_HurtAnimation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
+		class UPaperFlipbook* m_DeathAnimation;
 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 		TSubclassOf<class ABaseProjectile> m_Projectile;
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-		class USphereComponent* m_ProjectileSpawn;
+		class USphereComponent* m_ProjectileSpawn;	
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision")
+		class USphereComponent* m_AttackCollision;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
 		class UCameraComponent* m_Camera;
@@ -106,6 +118,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 		bool isHurt;
 	bool m_HurtAnimate;
+
+	bool m_PlayDeath = true; 
 
 public:
 	UFUNCTION(BlueprintPure)
