@@ -33,11 +33,11 @@ ABasePlayer::ABasePlayer()
 
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
+	m_AttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collision"));
+	m_AttackCollision->SetupAttachment(RootComponent);
 	m_ProjectileSpawn = CreateDefaultSubobject<USphereComponent>(TEXT("Projectile Spawn"));
 	m_ProjectileSpawn->SetupAttachment(RootComponent);
 
-	m_AttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collision")); 
-	m_AttackCollision->SetupAttachment(RootComponent); 
 
 
 	isSliding = false;
@@ -56,7 +56,7 @@ void ABasePlayer::BeginPlay()
 	Super::BeginPlay();
 	SetupAnimationStates();
 	m_AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
-	m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+	m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 
 }
@@ -105,7 +105,7 @@ void ABasePlayer::Tick(float DeltaTime)
 	UpdateAnimations();
 	UpdateRotations();
 
-	if (m_Health <= 0 && m_PlayDeath) 
+	if (m_Health <= 0 && m_PlayDeath)
 	{
 		m_PlayDeath = false;
 		GetSprite()->SetLooping(false);
@@ -146,7 +146,7 @@ void ABasePlayer::SetupAnimationStates()
 
 		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Sliding);
 		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Attacking);
-		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Hurt); 
+		GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation_Hurt);
 		//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Finished Adding Dynamics"));
 
 	}
@@ -240,7 +240,7 @@ void ABasePlayer::MeleeInput()
 
 		}
 	}
-	m_AttackCollision->Activate(); 
+	m_AttackCollision->Activate();
 }
 
 

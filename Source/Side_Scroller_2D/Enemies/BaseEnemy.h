@@ -3,27 +3,42 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Pawn.h"
+#include "PaperCharacter.h"
 #include "BaseEnemy.generated.h"
 
+/**
+ *
+ */
 UCLASS()
-class SIDE_SCROLLER_2D_API ABaseEnemy : public APawn
+class SIDE_SCROLLER_2D_API ABaseEnemy : public APaperCharacter
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+
 	ABaseEnemy();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
-	// Called every frame
+public:
 	virtual void Tick(float DeltaTime) override;
+	void UpdateAnimation();
+	void UpdateRotation();
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+protected:
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
+		class UPaperFlipbook* m_IdleAnimation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
+		class  UPaperFlipbook* m_RunAnimation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
+		class UPaperFlipbook* m_HitAnimation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
+		class UPaperFlipbook* m_DeathAnimation;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
+		class UPaperFlipbook* m_AttackAnimation;
+
+	float m_Health; 
 
 };

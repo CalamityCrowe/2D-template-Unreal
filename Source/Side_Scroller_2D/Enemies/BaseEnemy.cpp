@@ -2,33 +2,45 @@
 
 
 #include "BaseEnemy.h"
+#include "PaperFlipbookComponent.h"
 
-// Sets default values
 ABaseEnemy::ABaseEnemy()
 {
- 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	m_Health = 100.f;
 }
 
-// Called when the game starts or when spawned
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
-// Called every frame
 void ABaseEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	UpdateAnimation();
+	UpdateRotation();
 }
 
-// Called to bind functionality to input
-void ABaseEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ABaseEnemy::UpdateAnimation()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	const FVector EnemyVelocity = GetVelocity();
+	const float EnemySpeedSqr = EnemyVelocity.SizeSquared(); // gets the length of the velocity squared
+
+	UPaperFlipbook* DesiredAnimation = (EnemySpeedSqr > 0.0f) ? m_RunAnimation : m_IdleAnimation;
+	DesiredAnimation = (m_Health <= 0.f) ? m_DeathAnimation : DesiredAnimation;
+
+
+	
+	if (GetSprite()->GetFlipbook() != DesiredAnimation)
+	{
+		GetSprite()->SetFlipbook(DesiredAnimation);
+	}
+
 
 }
 
+void ABaseEnemy::UpdateRotation()
+{
+}
