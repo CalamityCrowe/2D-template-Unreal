@@ -29,4 +29,9 @@ protected:
 		int m_TileWidth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Map")
 		int m_TileHeight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Ref")
+		class ABasePlayer* m_PlayerRef; 
+
+	FIntPoint m_ViewportSize; 
 };

@@ -25,6 +25,8 @@ void ABaseEnemy::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 	UpdateAnimation();
 	UpdateRotation();
+
+	
 }
 
 void ABaseEnemy::UpdateAnimation()
@@ -47,4 +49,15 @@ void ABaseEnemy::UpdateAnimation()
 
 void ABaseEnemy::UpdateRotation()
 {
+	if (IsValid(GetController()))
+	{
+		if (GetVelocity().X > 0)
+		{
+			GetController()->SetControlRotation(FRotator(0, 0, 0));
+		}
+		if (GetVelocity().X < 0)
+		{
+			GetController()->SetControlRotation(FRotator(0, 180, 0));
+		}
+	}
 }

@@ -80,7 +80,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
 		class UPaperFlipbook* m_AttackAnimation2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_AttackAnimationSlide;	
+		class UPaperFlipbook* m_AttackAnimationSlide;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
 		class UPaperFlipbook* m_HurtAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
@@ -90,7 +90,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 		TSubclassOf<class ABaseProjectile> m_Projectile;
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-		class USphereComponent* m_ProjectileSpawn;	
+		class USphereComponent* m_ProjectileSpawn;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision")
 		class USphereComponent* m_AttackCollision;
 
@@ -117,11 +117,19 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 		bool isHurt;
-	bool m_HurtAnimate;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
+		bool m_HurtAnimate;
 
-	bool m_PlayDeath = true; 
+	bool m_PlayDeath = true;
+
 
 public:
+
+	FVector m_SocketLocation; 
+
+
+	USpringArmComponent* GetSpringArmComponent() { return m_SpringArmComponent;  }
+
 	UFUNCTION(BlueprintPure)
 		float HealthPercentage()
 	{

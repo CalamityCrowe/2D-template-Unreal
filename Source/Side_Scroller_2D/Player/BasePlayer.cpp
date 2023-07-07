@@ -58,6 +58,7 @@ void ABasePlayer::BeginPlay()
 	m_AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
 	m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
+	m_SocketLocation = m_SpringArmComponent->SocketOffset; 
 
 }
 
@@ -313,6 +314,12 @@ void ABasePlayer::FinishedAnimation_Sliding()
 
 void ABasePlayer::FinishedAnimation_Hurt()
 {
+	if (m_HurtAnimate) 
+	{
+		m_HurtAnimate = false; 
+		GetSprite()->SetLooping(true);
+		GetSprite()->Play();
+	}
 }
 
 void ABasePlayer::AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
