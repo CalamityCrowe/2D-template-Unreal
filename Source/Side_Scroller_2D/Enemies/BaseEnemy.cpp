@@ -3,10 +3,14 @@
 
 #include "BaseEnemy.h"
 #include "PaperFlipbookComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 ABaseEnemy::ABaseEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true; 
 
 	m_Health = 100.f;
 }
