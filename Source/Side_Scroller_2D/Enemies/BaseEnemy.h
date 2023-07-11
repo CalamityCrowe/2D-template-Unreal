@@ -41,4 +41,6 @@ protected:
 
 	float m_Health; 
 
+	class ABaseEnemyController* m_EnemyController; 
+
 };

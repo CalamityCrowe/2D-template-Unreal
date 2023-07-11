@@ -122,6 +122,8 @@ protected:
 
 	bool m_PlayDeath = true;
 
+	float m_FlashMax; 
+
 
 public:
 

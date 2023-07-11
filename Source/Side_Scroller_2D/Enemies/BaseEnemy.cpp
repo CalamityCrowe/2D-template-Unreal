@@ -4,13 +4,14 @@
 #include "BaseEnemy.h"
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "BaseEnemyController.h"
 
 
 ABaseEnemy::ABaseEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true; 
+	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
 	m_Health = 100.f;
 }
@@ -18,6 +19,7 @@ ABaseEnemy::ABaseEnemy()
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void ABaseEnemy::Tick(float DeltaTime)
@@ -26,7 +28,7 @@ void ABaseEnemy::Tick(float DeltaTime)
 	UpdateAnimation();
 	UpdateRotation();
 
-	
+
 }
 
 void ABaseEnemy::UpdateAnimation()
@@ -38,7 +40,7 @@ void ABaseEnemy::UpdateAnimation()
 	DesiredAnimation = (m_Health <= 0.f) ? m_DeathAnimation : DesiredAnimation;
 
 
-	
+
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
