@@ -19,15 +19,15 @@ ABaseEnemy::ABaseEnemy()
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
-
+	//m_EnemyController = Cast<ABaseEnemyController>(GetController());
 }
 
 void ABaseEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	HandleEnemyMovement();
 	UpdateAnimation();
 	UpdateRotation();
-
 
 }
 
@@ -51,15 +51,51 @@ void ABaseEnemy::UpdateAnimation()
 
 void ABaseEnemy::UpdateRotation()
 {
+
+
 	if (IsValid(GetController()))
 	{
 		if (GetVelocity().X > 0)
 		{
-			GetController()->SetControlRotation(FRotator(0, 0, 0));
+			SetActorRotation(FRotator(0, 0, 0));
+			GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Red, FString::Printf(TEXT("Rotation: %f"), GetActorRotation().Yaw));
 		}
 		if (GetVelocity().X < 0)
 		{
-			GetController()->SetControlRotation(FRotator(0, 180, 0));
+			SetActorRotation(FRotator(0, 180, 0));
+			GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation: %f"), GetActorRotation().Yaw));
+		}
+	}
+
+}
+
+void ABaseEnemy::HandleEnemyMovement()
+{
+	//if (IsValid(GetController()))
+	//{
+	//	if (GetControlRotation().Yaw > 0)
+	//	{
+	//		AddMovementInput(FVector(1, 0, 0), -1);
+	//	}
+	//	else
+	//	{
+	//		AddMovementInput(FVector(1, 0, 0), 1);
+
+	//	}
+	//}
+
+	if (IsValid(GetController()))
+	{
+		if (ABaseEnemyController* temp = Cast<ABaseEnemyController>(GetController()))
+		{
+			if (temp->m_Flipmovement == true)
+			{
+				AddMovementInput(FVector(1, 0, 0), 1);
+			}
+			else
+			{
+				AddMovementInput(FVector(1, 0, 0), -1);
+			}
 		}
 	}
 }

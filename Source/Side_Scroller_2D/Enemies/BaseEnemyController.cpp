@@ -7,8 +7,8 @@ ABaseEnemyController::ABaseEnemyController()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-
-
+	m_Flipmovement = false; 
+	m_Target = 1.f; 
 }
 
 void ABaseEnemyController::BeginPlay()
@@ -23,5 +23,12 @@ void ABaseEnemyController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime); 
 	
-	MoveToLocation(FVector(0,0,-446), 10.f); 
+	m_Timer += DeltaTime;
+	if (m_Timer >= m_Target) 
+	{
+		m_Timer = 0;
+		m_Flipmovement = !m_Flipmovement; 
+	}
+
+
 }

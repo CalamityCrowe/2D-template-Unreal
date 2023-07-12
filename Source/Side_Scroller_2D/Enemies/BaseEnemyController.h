@@ -22,8 +22,13 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override; 
 	
+	bool m_Flipmovement; 
+
 protected:
 
 	class ABaseEnemy* m_EnemyRef; 
+
+	float m_Timer; 
+	float m_Target; 
 
 };
