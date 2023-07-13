@@ -58,17 +58,15 @@ void ABaseEnemy::UpdateRotation()
 {
 
 
-	if (IsValid(GetController()))
+	if (IsValid(GetController())) // checks if the controller is valid
 	{
-		if (GetVelocity().X > 0)
+		if (GetVelocity().X > 0) // checks if velocity is greater than 0
 		{
-			SetActorRotation(FRotator(0, 0, 0));
-			GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Red, FString::Printf(TEXT("Rotation: %f"), GetActorRotation().Yaw));
+			SetActorRotation(FRotator(0, 0, 0)); // sets the rotation to 0 
 		}
-		if (GetVelocity().X < 0)
+		if (GetVelocity().X < 0) // checks if the velocity is less than 0 
 		{
-			SetActorRotation(FRotator(0, 180, 0));
-			GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Rotation: %f"), GetActorRotation().Yaw));
+			SetActorRotation(FRotator(0, 180, 0)); // sets the actors rotation to 180 in the yaw 
 		}
 	}
 
@@ -76,24 +74,12 @@ void ABaseEnemy::UpdateRotation()
 
 void ABaseEnemy::HandleEnemyMovement()
 {
-	//if (IsValid(GetController()))
-	//{
-	//	if (GetControlRotation().Yaw > 0)
-	//	{
-	//		AddMovementInput(FVector(1, 0, 0), -1);
-	//	}
-	//	else
-	//	{
-	//		AddMovementInput(FVector(1, 0, 0), 1);
 
-	//	}
-	//}
-
-	if (IsValid(GetController()))
+	if (IsValid(GetController())) // checks if there is a valid controller assigned to the enemy
 	{
-		if (ABaseEnemyController* temp = Cast<ABaseEnemyController>(GetController()))
+		if (ABaseEnemyController* temp = Cast<ABaseEnemyController>(GetController())) // then checks it can be cast to the enemycontroller sub type
 		{
-			if (temp->m_Flipmovement == true)
+			if (temp->m_Flipmovement == true) // checks if the movement should be flipped
 			{
 				AddMovementInput(FVector(1, 0, 0), 1);
 			}

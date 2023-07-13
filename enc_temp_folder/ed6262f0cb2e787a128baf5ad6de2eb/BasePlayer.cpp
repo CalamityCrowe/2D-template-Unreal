@@ -9,8 +9,6 @@
 #include "Side_Scroller_2D/Projectiles/BaseProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SphereComponent.h"
-#include "Kismet/KismetMathLibrary.h"
-
 
 
 // Sets default values
@@ -46,11 +44,10 @@ ABasePlayer::ABasePlayer()
 	isAttacking = false;
 
 
+	m_Health = 100;
+	m_Mana = 100;
 	m_MaxHealth = 100;
-	m_Health = m_MaxHealth;
-	m_newHealth = m_MaxHealth;
 	m_MaxMana = 100;
-	m_Mana = m_MaxMana;
 }
 
 // Called when the game starts or when spawned
@@ -61,7 +58,7 @@ void ABasePlayer::BeginPlay()
 	m_AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
 	m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	m_SocketLocation = m_SpringArmComponent->SocketOffset;
+	m_SocketLocation = m_SpringArmComponent->SocketOffset; 
 
 }
 
@@ -107,14 +104,9 @@ void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	UpdateAnimations();
-	if (m_isHurt == false)
+	if(m_isHurt == false)
 	{
 		UpdateRotations();
-	}
-
-	if (m_Health != m_newHealth)
-	{
-		AnimateHealthChange();
 	}
 
 	if (m_Health <= 0 && m_PlayDeath)
@@ -270,16 +262,16 @@ void ABasePlayer::FireProjectile()
 			proj = nullptr;
 		}
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Sliding"));
+	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Sliding"));
 }
 
 void ABasePlayer::PlayerHurt()
 {
 	m_HurtFlash = true;
-	m_isHurt = true;
-	GetSprite()->SetLooping(false);
-	m_newHealth -= 10;
-	//GEngine->AddOnScreenDebugMessage(-10, 10.f, FColor::Red, FString::Printf(TEXT("Player Hurt")));
+	m_isHurt = true; 
+	GetSprite()->SetLooping(false); 
+	m_Health -= 10;
+	GEngine->AddOnScreenDebugMessage(-10, 10.f, FColor::Red, FString::Printf(TEXT("Player Hurt")));
 
 }
 
@@ -335,10 +327,10 @@ void ABasePlayer::FinishedAnimation_Sliding()
 
 void ABasePlayer::FinishedAnimation_Hurt()
 {
-	if (m_isHurt)
+	if (m_isHurt) 
 	{
-		m_isHurt = false;
-		m_HurtFlash = false;
+		m_isHurt = false; 
+		m_HurtFlash = false; 
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 	}
@@ -346,17 +338,8 @@ void ABasePlayer::FinishedAnimation_Hurt()
 
 void ABasePlayer::AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Overlapping"));
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Overlapping"));
 
-}
-
-void ABasePlayer::AnimateHealthChange()
-{
-	m_Health = UKismetMathLibrary::Lerp(m_Health, m_newHealth, 0.1f);
-	if (abs(m_Health - m_newHealth < 1.f))
-	{
-		m_Health = m_newHealth;
-	}
 }
 
 
