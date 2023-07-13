@@ -27,9 +27,13 @@ void ABaseEnemy::BeginPlay()
 void ABaseEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (m_isDead == false)
+	if (m_Health > 0)
 	{
 		HandleEnemyMovement();
+	}
+	else
+	{
+		m_isDead = true;
 	}
 	UpdateAnimation();
 	UpdateRotation();
@@ -45,7 +49,10 @@ void ABaseEnemy::UpdateAnimation()
 	DesiredAnimation = (m_Health <= 0.f) ? m_DeathAnimation : DesiredAnimation;
 
 
-
+	if (m_isDead)
+	{
+		GetSprite()->SetLooping(false);
+	}
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);

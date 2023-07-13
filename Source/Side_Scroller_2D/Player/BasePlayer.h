@@ -63,8 +63,8 @@ public:
 
 	UFUNCTION()
 		void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-private: 
-	void AnimateHealthChange(); 
+private:
+	void AnimateHealthChange();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
@@ -107,7 +107,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		float m_Health;
-	float m_newHealth; 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+		float m_newHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		float m_Mana;
 	float m_MaxHealth, m_MaxMana;
