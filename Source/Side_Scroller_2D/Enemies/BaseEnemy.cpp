@@ -5,7 +5,8 @@
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "BaseEnemyController.h"
-
+#include "Side_Scroller_2D/Player/BasePlayer.h"
+#include "Components/CapsuleComponent.h"
 
 ABaseEnemy::ABaseEnemy()
 {
@@ -20,12 +21,16 @@ void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	//m_EnemyController = Cast<ABaseEnemyController>(GetController());
+	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ABaseEnemy::OnOverlapBegin);
 }
 
 void ABaseEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	HandleEnemyMovement();
+	if (m_isDead == false)
+	{
+		HandleEnemyMovement();
+	}
 	UpdateAnimation();
 	UpdateRotation();
 
@@ -96,6 +101,30 @@ void ABaseEnemy::HandleEnemyMovement()
 			{
 				AddMovementInput(FVector(1, 0, 0), -1);
 			}
+		}
+	}
+}
+
+void ABaseEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor != this && IsValid(OtherActor) && m_isDead == false) // checks if the other actor is not itself and is valid, along with checking if itself is dead
+	{
+		if (ABasePlayer* tempPlayer = Cast<ABasePlayer>(OtherActor))
+		{
+			if (tempPlayer->isHurt() == false)
+			{
+				tempPlayer->PlayerHurt(); // calls the function to hurt the player
+				float X_Force = (tempPlayer->GetActorLocation().X - GetActorLocation().X > 0) ? 1 : -1; // checks which direction it should launch the player
+				//GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Impact X: %f"), SweepResult.ImpactNormal.X));
+
+
+				FVector dir = FVector((X_Force) * 250, 0, 200);
+
+				tempPlayer->LaunchCharacter(dir, false, false);
+
+				//tempPlayer->GetCharacterMovement()->Velocity = FVector();			
+			}
+
 		}
 	}
 }

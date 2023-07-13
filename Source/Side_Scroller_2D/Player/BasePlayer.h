@@ -50,6 +50,7 @@ public:
 
 	void FireProjectile();
 
+	void PlayerHurt();
 
 
 
@@ -116,21 +117,21 @@ protected:
 		TEnumAsByte<AttackStates> m_NextAttack;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-		bool isHurt;
+		bool m_isHurt;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-		bool m_HurtAnimate;
+		bool m_HurtFlash;
 
 	bool m_PlayDeath = true;
 
-	float m_FlashMax; 
+	float m_FlashMax;
 
 
 public:
 
-	FVector m_SocketLocation; 
+	FVector m_SocketLocation;
 
 
-	USpringArmComponent* GetSpringArmComponent() { return m_SpringArmComponent;  }
+	USpringArmComponent* GetSpringArmComponent() { return m_SpringArmComponent; }
 
 	UFUNCTION(BlueprintPure)
 		float HealthPercentage()
@@ -142,4 +143,6 @@ public:
 	{
 		return m_Mana / m_MaxMana;
 	}
+
+	bool isHurt() { return m_isHurt; }
 };

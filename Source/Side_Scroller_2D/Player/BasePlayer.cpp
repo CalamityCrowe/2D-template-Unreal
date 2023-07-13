@@ -74,7 +74,7 @@ void ABasePlayer::UpdateAnimations()
 	DesiredAnimation = (isAttacking && isSliding) ? m_AttackAnimationSlide : DesiredAnimation;
 	DesiredAnimation = (isAttacking && m_CurrentAttack == AttackStates::Attack1) ? m_AttackAnimation1 : DesiredAnimation;
 	DesiredAnimation = (isAttacking && m_CurrentAttack == AttackStates::Attack2) ? m_AttackAnimation2 : DesiredAnimation;
-	DesiredAnimation = (m_HurtAnimate) ? m_HurtAnimation : DesiredAnimation;
+	DesiredAnimation = (m_isHurt) ? m_HurtAnimation : DesiredAnimation;
 	DesiredAnimation = (m_Health <= 0) ? m_DeathAnimation : DesiredAnimation;
 
 
@@ -104,7 +104,10 @@ void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	UpdateAnimations();
-	UpdateRotations();
+	if(m_isHurt == false)
+	{
+		UpdateRotations();
+	}
 
 	if (m_Health <= 0 && m_PlayDeath)
 	{
@@ -157,7 +160,7 @@ void ABasePlayer::MoveRight(float AxisInput)
 {
 	if (GetCharacterMovement()->IsCrouching() == false)
 	{
-		if (isAttacking == false && m_Health > 0)
+		if (isAttacking == false && m_Health > 0 && m_isHurt == false)
 		{
 			AddMovementInput(FVector(1, 0, 0), AxisInput);
 		}
@@ -262,6 +265,16 @@ void ABasePlayer::FireProjectile()
 	GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Sliding"));
 }
 
+void ABasePlayer::PlayerHurt()
+{
+	m_HurtFlash = true;
+	m_isHurt = true; 
+	GetSprite()->SetLooping(false); 
+	m_Health -= 10;
+	GEngine->AddOnScreenDebugMessage(-10, 10.f, FColor::Red, FString::Printf(TEXT("Player Hurt")));
+
+}
+
 void ABasePlayer::FinishedAnimation_Attacking()
 {
 
@@ -314,9 +327,10 @@ void ABasePlayer::FinishedAnimation_Sliding()
 
 void ABasePlayer::FinishedAnimation_Hurt()
 {
-	if (m_HurtAnimate) 
+	if (m_isHurt) 
 	{
-		m_HurtAnimate = false; 
+		m_isHurt = false; 
+		m_HurtFlash = false; 
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 	}
