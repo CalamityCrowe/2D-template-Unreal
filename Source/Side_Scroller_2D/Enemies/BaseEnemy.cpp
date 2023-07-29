@@ -58,7 +58,6 @@ void ABaseEnemy::UpdateAnimation()
 		GetSprite()->SetFlipbook(DesiredAnimation);
 	}
 
-
 }
 
 void ABaseEnemy::UpdateRotation()
@@ -115,6 +114,7 @@ void ABaseEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 
 				tempPlayer->LaunchCharacter(dir, false, false);
 
+				tempPlayer->PlayHitSound(); 
 				//tempPlayer->GetCharacterMovement()->Velocity = FVector();			
 			}
 

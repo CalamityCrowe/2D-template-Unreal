@@ -6,9 +6,11 @@
 #include "PaperFlipbookComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/AudioComponent.h"
+#include "Components/SphereComponent.h"
 #include "Side_Scroller_2D/Projectiles/BaseProjectile.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 
 
@@ -40,6 +42,7 @@ ABasePlayer::ABasePlayer()
 	m_ProjectileSpawn = CreateDefaultSubobject<USphereComponent>(TEXT("Projectile Spawn"));
 	m_ProjectileSpawn->SetupAttachment(RootComponent);
 
+	m_Footsteps_Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Footsteps Audio"));
 
 
 	isSliding = false;
@@ -123,6 +126,8 @@ void ABasePlayer::Tick(float DeltaTime)
 		GetSprite()->SetLooping(false);
 	}
 
+
+
 }
 
 // Called to bind functionality to input
@@ -137,7 +142,7 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		InputComponent->BindAction("Crouch", IE_Pressed, this, &ABasePlayer::CrouchInput);
 		InputComponent->BindAction("Crouch", IE_Released, this, &ABasePlayer::UnCrouchInput);
 
-		InputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+		InputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
 		InputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
 
 		InputComponent->BindAction("Fire", IE_Pressed, this, &ABasePlayer::FireProjectile);
@@ -171,6 +176,10 @@ void ABasePlayer::MoveRight(float AxisInput)
 		if (isAttacking == false && m_Health > 0 && m_isHurt == false)
 		{
 			AddMovementInput(FVector(1, 0, 0), AxisInput);
+			if (GetCharacterMovement()->IsFalling() == false && GetCharacterMovement()->Velocity.SizeSquared() > 0 && m_Footsteps_Audio->IsPlaying() == false)
+			{
+				m_Footsteps_Audio->Play();
+			}
 		}
 	}
 	else
@@ -181,6 +190,7 @@ void ABasePlayer::MoveRight(float AxisInput)
 			Sliding();
 		}
 	}
+
 }
 
 void ABasePlayer::CrouchInput()
@@ -283,6 +293,15 @@ void ABasePlayer::PlayerHurt()
 
 }
 
+void ABasePlayer::Jump()
+{
+	ACharacter::Jump(); 
+	if (GetCharacterMovement()->IsFalling() == false) 
+	{
+		UGameplayStatics::PlaySound2D(GetWorld(), m_JumpSound); 
+	}
+}
+
 void ABasePlayer::FinishedAnimation_Attacking()
 {
 
@@ -349,6 +368,8 @@ void ABasePlayer::AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	//GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Red, TEXT("Overlapping"));
 
 }
+
+
 
 void ABasePlayer::AnimateHealthChange()
 {

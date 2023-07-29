@@ -52,6 +52,8 @@ public:
 
 	void PlayerHurt();
 
+	virtual void Jump() override; 
+
 
 
 	UFUNCTION(BlueprintAuthorityOnly)
@@ -63,6 +65,10 @@ public:
 
 	UFUNCTION()
 		void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayHitSound(); 
+
 private:
 	void AnimateHealthChange();
 
@@ -88,6 +94,10 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
 		class UPaperFlipbook* m_DeathAnimation;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio")
+		class UAudioComponent* m_Footsteps_Audio;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio")
+		class USoundBase* m_JumpSound; 
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
 		TSubclassOf<class ABaseProjectile> m_Projectile;
@@ -128,6 +138,7 @@ protected:
 
 	float m_FlashMax;
 
+	
 
 public:
 
