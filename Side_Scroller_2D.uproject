@@ -22,6 +22,10 @@
 			"TargetAllowList": [
 				"Editor"
 			]
+		},
+		{
+			"Name": "Volume_Controller",
+			"Enabled": false
 		}
 	]
 }
