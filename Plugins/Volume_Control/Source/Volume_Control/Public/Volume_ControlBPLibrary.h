@@ -33,10 +33,10 @@ public:
 		static float GetEffectVolume();
 	UFUNCTION(BlueprintPure, meta = (DisplayName = "Get Music Volume ", Keywords = "Get Music Volume "), Category = "Volume Controller")
 		static float GetMusicVolume();
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Music Volume ", Keywords = "Get Music Volume "), Category = "Volume Controller")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set Master Volume ", Keywords = "Set Master Volume "), Category = "Volume Controller")
 		static void SetMasterVolume(float master);
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Music Volume ", Keywords = "Get Music Volume "), Category = "Volume Controller")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set Effect Volume ", Keywords = "Set Effect Volume "), Category = "Volume Controller")
 		static void SetEffectVolume(float sfx);
-	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Get Music Volume ", Keywords = "Get Music Volume "), Category = "Volume Controller")
+	UFUNCTION(BlueprintCallable, meta = (DisplayName = "Set Music Volume ", Keywords = "Set Music Volume "), Category = "Volume Controller")
 		static void SetMusicVolume(float music);
 };

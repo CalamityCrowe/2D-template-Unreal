@@ -32,14 +32,38 @@ float UVolume_ControlBPLibrary::GetMusicVolume()
 void UVolume_ControlBPLibrary::SetMasterVolume(float master)
 {
 	mf_MasterVolume = master;
+	if (mf_MasterVolume < 0) 
+	{
+		mf_MasterVolume = 0;
+	}
+	if (mf_MasterVolume > 1) 
+	{
+		mf_MasterVolume = 1.f; 
+	}
 }
 
 void UVolume_ControlBPLibrary::SetEffectVolume(float sfx)
 {
 	mf_SoundEffectVolume = sfx; 
+	if (mf_SoundEffectVolume < 0) 
+	{
+		mf_SoundEffectVolume = 0; 
+	}
+	if (mf_SoundEffectVolume > 1) 
+	{
+		mf_SoundEffectVolume = 1; 
+	}
 }
 
 void UVolume_ControlBPLibrary::SetMusicVolume(float music)
 {
 	mf_MusicVolume = music; 
+	if (mf_MusicVolume < 0) 
+	{
+		mf_MusicVolume = 0; 
+	}
+	if (mf_MusicVolume > 1) 
+	{
+		mf_MusicVolume = 1; 
+	}
 }
