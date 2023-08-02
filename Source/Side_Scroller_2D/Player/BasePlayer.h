@@ -68,6 +68,8 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayHitSound(); 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayAttackSound(); 
 
 private:
 	void AnimateHealthChange();

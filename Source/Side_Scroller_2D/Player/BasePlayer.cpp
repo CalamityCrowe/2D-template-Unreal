@@ -176,7 +176,7 @@ void ABasePlayer::MoveRight(float AxisInput)
 		if (isAttacking == false && m_Health > 0 && m_isHurt == false)
 		{
 			AddMovementInput(FVector(1, 0, 0), AxisInput);
-			if (GetCharacterMovement()->IsFalling() == false && GetCharacterMovement()->Velocity.SizeSquared() > 0 && m_Footsteps_Audio->IsPlaying() == false)
+			if (GetCharacterMovement()->IsFalling() == false && GetCharacterMovement()->Velocity.SizeSquared() > 0 && m_Footsteps_Audio->IsPlaying() == false &&  isSliding == false)
 			{
 				m_Footsteps_Audio->Play();
 			}
@@ -238,6 +238,7 @@ void ABasePlayer::MeleeInput()
 		isAttacking = true;
 		GetSprite()->SetLooping(false);
 		m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		PlayAttackSound(); 
 	}
 	else
 	{
@@ -259,7 +260,7 @@ void ABasePlayer::MeleeInput()
 			m_CurrentAttack = m_NextAttack;
 			m_NextAttack = AttackStates::None;
 			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-
+			PlayAttackSound(); // calls the blueprints associated with this event 
 		}
 	}
 	m_AttackCollision->Activate();
@@ -268,7 +269,7 @@ void ABasePlayer::MeleeInput()
 
 void ABasePlayer::FireProjectile()
 {
-	if (m_Mana)
+	if (m_Mana && m_ProjectileSpawn)
 	{
 		const FRotator SpawnRotation = GetControlRotation();
 		const FVector SpawnLocation = m_ProjectileSpawn->GetComponentLocation();
@@ -280,7 +281,6 @@ void ABasePlayer::FireProjectile()
 			proj = nullptr;
 		}
 	}
-	//GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Sliding"));
 }
 
 void ABasePlayer::PlayerHurt()
@@ -289,7 +289,6 @@ void ABasePlayer::PlayerHurt()
 	m_isHurt = true;
 	GetSprite()->SetLooping(false);
 	m_newHealth -= 10;
-	//GEngine->AddOnScreenDebugMessage(-10, 10.f, FColor::Red, FString::Printf(TEXT("Player Hurt")));
 
 }
 
@@ -333,6 +332,7 @@ void ABasePlayer::FinishedAnimation_Attacking()
 			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 
+			PlayAttackSound(); // calls the blueprints associated with this event
 			break;
 
 		}
