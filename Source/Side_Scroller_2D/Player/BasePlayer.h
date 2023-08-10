@@ -39,6 +39,14 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayHitSound();
+	UFUNCTION(BlueprintImplementableEvent)
+		void PlayAttackSound();
+
+	void PlayerHurt();
+protected: 
+
 	void SetupAnimationStates();
 
 	void MoveRight(float AxisInput);
@@ -50,7 +58,7 @@ public:
 
 	void FireProjectile();
 
-	void PlayerHurt();
+
 
 	virtual void Jump() override; 
 
@@ -66,10 +74,8 @@ public:
 	UFUNCTION()
 		void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UFUNCTION(BlueprintImplementableEvent)
-		void PlayHitSound(); 
-	UFUNCTION(BlueprintImplementableEvent)
-		void PlayAttackSound(); 
+
+
 
 private:
 	void AnimateHealthChange();
