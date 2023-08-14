@@ -6,24 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "Base_Collectibles.generated.h"
 
-UENUM(BlueprintType)
-enum class CollectType :uint8
-{
-	Health UMETA(DisplayName = "Health"),
-	MaxHealth UMETA(DisplayName = "Max Health"),
-	Mana UMETA(DisplayName = "Mana"),
-	MaxMana UMETA(DisplayName = "Max Mana"),
-
-
-};
-
 UCLASS()
 class SIDE_SCROLLER_2D_API ABase_Collectibles : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ABase_Collectibles();
 
 protected:
@@ -39,15 +27,11 @@ private:
 	UPROPERTY(Category = "Collisions", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		TObjectPtr<class UCapsuleComponent> m_Collision;
 
-protected:
-	UPROPERTY(Category = "Collectible Type", EditDefaultsOnly, BluePrintReadOnly)
-		TEnumAsByte<CollectType> m_CollectType;
-
-	UPROPERTY(Category = "Collectible Value", EditDefaultsOnly, BluePrintReadWrite)
-		int m_CollectValue; 
 
 public:
 	FORCEINLINE class UPaperFlipbookComponent* GetSprite() const { return m_Sprite; }
+	FORCEINLINE class UCapsuleComponent* GetCollider() const { return m_Collision; }
+
 
 	UFUNCTION()
 		virtual void CollectibleCollision(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

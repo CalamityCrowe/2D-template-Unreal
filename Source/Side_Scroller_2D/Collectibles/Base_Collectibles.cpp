@@ -4,7 +4,6 @@
 #include "Base_Collectibles.h"
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "Side_Scroller_2D/Player/BasePlayer.h"
 
 // Sets default values
 ABase_Collectibles::ABase_Collectibles()
@@ -21,8 +20,6 @@ ABase_Collectibles::ABase_Collectibles()
 		m_Sprite->SetCollisionProfileName(FName(TEXT("CharacterMesh")));
 		m_Sprite->SetGenerateOverlapEvents(false);
 	}
-
-	m_CollectValue = 0; 
 }
 
 // Called when the game starts or when spawned
@@ -45,16 +42,7 @@ void ABase_Collectibles::CollectibleCollision(UPrimitiveComponent* OverlappedCom
 {
 
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Turquoise, FString(TEXT("Destroyed")));
-	if(TObjectPtr<ABasePlayer> tempPlayer = Cast<ABasePlayer>(OtherActor))
-	{
-		
-		switch (m_CollectType)
-		{
-		case CollectType::Health:
-			tempPlayer->RecoverHealth(m_CollectValue); 
-			break;
-		}
-	}
+
 
 	Destroy(); // destroys the collectible when collided with the player
 

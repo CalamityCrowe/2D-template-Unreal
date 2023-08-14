@@ -39,12 +39,19 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+#pragma region Blueprint event implementation
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayHitSound();
 	UFUNCTION(BlueprintImplementableEvent)
 		void PlayAttackSound();
+	UFUNCTION(BlueprintImplementableEvent)
+		void SpeedBoostTimer(float timer);
+	UFUNCTION(BlueprintImplementableEvent)
+		void StrengthBoostTimer(float timer);
+#pragma endregion
 
 	void PlayerHurt();
+
 protected:
 
 	void SetupAnimationStates();
@@ -79,7 +86,7 @@ protected:
 
 private:
 	void AnimateHealthChange();
-	void AnimateManaChange(); 
+	void AnimateManaChange();
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
@@ -131,7 +138,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		float m_Mana;
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Stats")
-		float m_newMana; 
+		float m_newMana;
 
 	float m_MaxHealth, m_MaxMana;
 

@@ -79,6 +79,7 @@ protected:
 
 private:
 	void AnimateHealthChange();
+	void AnimateManaChange(); 
 
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
@@ -129,6 +130,9 @@ protected:
 		float m_newHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
 		float m_Mana;
+	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Stats")
+		float m_newMana; 
+
 	float m_MaxHealth, m_MaxMana;
 
 
