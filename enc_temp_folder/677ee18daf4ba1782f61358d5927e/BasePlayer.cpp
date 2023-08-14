@@ -54,7 +54,6 @@ ABasePlayer::ABasePlayer()
 	m_newHealth = m_MaxHealth;
 	m_MaxMana = 100;
 	m_Mana = m_MaxMana;
-	m_newMana = m_MaxMana; 
 }
 
 // Called when the game starts or when spawned
@@ -120,12 +119,6 @@ void ABasePlayer::Tick(float DeltaTime)
 	{
 		AnimateHealthChange();
 	}
-	if (m_Mana != m_newMana) 
-	{
-		AnimateManaChange(); 
-	}
-
-
 
 	if (m_Health <= 0 && m_PlayDeath)
 	{
@@ -183,7 +176,7 @@ void ABasePlayer::MoveRight(float AxisInput)
 		if (isAttacking == false && m_Health > 0 && m_isHurt == false)
 		{
 			AddMovementInput(FVector(1, 0, 0), AxisInput);
-			if (GetCharacterMovement()->IsFalling() == false && GetCharacterMovement()->Velocity.SizeSquared() > 0 && m_Footsteps_Audio->IsPlaying() == false && isSliding == false)
+			if (GetCharacterMovement()->IsFalling() == false && GetCharacterMovement()->Velocity.SizeSquared() > 0 && m_Footsteps_Audio->IsPlaying() == false &&  isSliding == false)
 			{
 				m_Footsteps_Audio->Play();
 			}
@@ -245,7 +238,7 @@ void ABasePlayer::MeleeInput()
 		isAttacking = true;
 		GetSprite()->SetLooping(false);
 		m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		PlayAttackSound();
+		PlayAttackSound(); 
 	}
 	else
 	{
@@ -284,7 +277,7 @@ void ABasePlayer::FireProjectile()
 		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		if (ABaseProjectile* proj = GetWorld()->SpawnActor<ABaseProjectile>(m_Projectile, SpawnLocation, SpawnRotation, spawnParam))
 		{
-			m_newMana -= 10;
+			m_Mana -= 10;
 			proj = nullptr;
 		}
 	}
@@ -301,10 +294,10 @@ void ABasePlayer::PlayerHurt()
 
 void ABasePlayer::Jump()
 {
-	ACharacter::Jump();
-	if (GetCharacterMovement()->IsFalling() == false)
+	ACharacter::Jump(); 
+	if (GetCharacterMovement()->IsFalling() == false) 
 	{
-		UGameplayStatics::PlaySound2D(GetWorld(), m_JumpSound);
+		UGameplayStatics::PlaySound2D(GetWorld(), m_JumpSound); 
 	}
 }
 
@@ -381,18 +374,9 @@ void ABasePlayer::AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* Oth
 void ABasePlayer::AnimateHealthChange()
 {
 	m_Health = UKismetMathLibrary::Lerp(m_Health, m_newHealth, 0.1f);
-	if (abs(m_Health - m_newHealth) < 1.f)
+	if (abs(m_Health - m_newHealth < 1.f))
 	{
 		m_Health = m_newHealth;
-	}
-}
-
-void ABasePlayer::AnimateManaChange()
-{
-	m_Mana = UKismetMathLibrary::Lerp(m_Mana, m_newMana, 0.1f); 
-	if (abs(m_Mana - m_newMana) < 1.f) 
-	{
-		m_Mana = m_newMana; 
 	}
 }
 

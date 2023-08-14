@@ -41,7 +41,10 @@ private:
 
 protected:
 	UPROPERTY(Category = "Collectible Type", EditDefaultsOnly, BluePrintReadOnly)
-		TEnumAsByte<CollectType> m_CollectType; 
+		TEnumAsByte<CollectType> m_CollectType;
+
+	UPROPERTY(Category = "Collectible Value", EditDefaultsOnly, BluePrintReadWrite)
+		int m_CollectValue; 
 
 public:
 	FORCEINLINE class UPaperFlipbookComponent* GetSprite() const { return m_Sprite; }

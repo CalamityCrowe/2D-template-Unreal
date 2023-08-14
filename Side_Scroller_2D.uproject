@@ -26,6 +26,10 @@
 		{
 			"Name": "Volume_Controller",
 			"Enabled": false
+		},
+		{
+			"Name": "Metasound",
+			"Enabled": true
 		}
 	]
 }
