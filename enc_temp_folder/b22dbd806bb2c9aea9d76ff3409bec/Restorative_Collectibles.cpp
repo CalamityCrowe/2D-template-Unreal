@@ -24,6 +24,7 @@ void ARestorative_Collectibles::Tick(float DeltaTime)
 
 void ARestorative_Collectibles::CollectibleCollision(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	ABase_Collectibles::CollectibleCollision(OverlappedComp, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 	if (TObjectPtr<ABasePlayer> tempPlayer = Cast<ABasePlayer>(OtherActor))
 	{
 

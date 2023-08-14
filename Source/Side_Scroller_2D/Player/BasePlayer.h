@@ -177,7 +177,10 @@ public:
 		return m_Mana / m_MaxMana;
 	}
 
+	void IncreaseMaxHealth(float MH = 0) { m_MaxHealth += MH; m_newHealth += MH / 2; }
+	void IncreaseMaxMana(float MM = 0) { m_MaxMana += MM; m_newMana += MM / 2; }
 	void RecoverHealth(float H = 0) { m_newHealth += H; }
+	void RecoverMana(float M = 0) { m_newMana += M; }
 
 
 	bool isHurt() { return m_isHurt; }

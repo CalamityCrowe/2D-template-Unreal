@@ -33,6 +33,15 @@ void ARestorative_Collectibles::CollectibleCollision(UPrimitiveComponent* Overla
 		case CollectType::Health:
 			tempPlayer->RecoverHealth(m_CollectValue);
 			break;
+		case CollectType::MaxHealth:
+			tempPlayer->IncreaseMaxHealth(m_CollectValue);
+			break;
+		case CollectType::Mana:
+			tempPlayer->RecoverMana(m_CollectValue);
+			break;
+		case CollectType::MaxMana:
+			tempPlayer->IncreaseMaxMana(m_CollectValue);
+			break;
 		}
 	}
 }

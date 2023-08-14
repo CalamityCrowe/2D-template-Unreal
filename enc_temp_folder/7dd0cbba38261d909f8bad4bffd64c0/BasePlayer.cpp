@@ -54,7 +54,7 @@ ABasePlayer::ABasePlayer()
 	m_newHealth = m_MaxHealth;
 	m_MaxMana = 100;
 	m_Mana = m_MaxMana;
-	m_newMana = m_MaxMana;
+	m_newMana = m_MaxMana; 
 }
 
 // Called when the game starts or when spawned
@@ -120,9 +120,9 @@ void ABasePlayer::Tick(float DeltaTime)
 	{
 		AnimateHealthChange();
 	}
-	if (m_Mana != m_newMana)
+	if (m_Mana != m_newMana) 
 	{
-		AnimateManaChange();
+		AnimateManaChange(); 
 	}
 
 
@@ -276,7 +276,7 @@ void ABasePlayer::MeleeInput()
 
 void ABasePlayer::FireProjectile()
 {
-	if (m_Mana > 0 && m_ProjectileSpawn)
+	if (m_Mana && m_ProjectileSpawn)
 	{
 		const FRotator SpawnRotation = GetControlRotation();
 		const FVector SpawnLocation = m_ProjectileSpawn->GetComponentLocation();
@@ -301,13 +301,10 @@ void ABasePlayer::PlayerHurt()
 
 void ABasePlayer::Jump()
 {
-	if (isSliding == false)
+	ACharacter::Jump();
+	if (GetCharacterMovement()->IsFalling() == false)
 	{
-		ACharacter::Jump();
-		if (GetCharacterMovement()->IsFalling() == false)
-		{
-			UGameplayStatics::PlaySound2D(GetWorld(), m_JumpSound);
-		}
+		UGameplayStatics::PlaySound2D(GetWorld(), m_JumpSound);
 	}
 }
 
@@ -392,10 +389,10 @@ void ABasePlayer::AnimateHealthChange()
 
 void ABasePlayer::AnimateManaChange()
 {
-	m_Mana = UKismetMathLibrary::Lerp(m_Mana, m_newMana, 0.1f);
-	if (abs(m_Mana - m_newMana) < 1.f)
+	m_Mana = UKismetMathLibrary::Lerp(m_Mana, m_newMana, 0.1f); 
+	if (abs(m_Mana - m_newMana) < 1.f) 
 	{
-		m_Mana = m_newMana;
+		m_Mana = m_newMana; 
 	}
 }
 
