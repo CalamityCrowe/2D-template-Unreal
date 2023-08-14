@@ -26,11 +26,13 @@ private:
 		TObjectPtr<class UPaperFlipbookComponent> m_Sprite;
 	UPROPERTY(Category = "Collisions", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 		TObjectPtr<class UCapsuleComponent> m_Collision;
-
+	UPROPERTY(Category = "Audio", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
+		TObjectPtr<class UAudioComponent> m_Audio;
 
 public:
 	FORCEINLINE class UPaperFlipbookComponent* GetSprite() const { return m_Sprite; }
 	FORCEINLINE class UCapsuleComponent* GetCollider() const { return m_Collision; }
+	FORCEINLINE class UAudioComponent* GetAudio() const { return m_Audio; }
 
 
 	UFUNCTION()

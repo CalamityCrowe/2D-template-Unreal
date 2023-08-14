@@ -4,6 +4,8 @@
 #include "Base_Collectibles.h"
 #include "Components/CapsuleComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "Components/AudioComponent.h"
+#include "Side_Scroller_2D/Player/BasePlayer.h"
 
 // Sets default values
 ABase_Collectibles::ABase_Collectibles()
@@ -12,6 +14,9 @@ ABase_Collectibles::ABase_Collectibles()
 	PrimaryActorTick.bCanEverTick = true;
 	m_Collision = CreateOptionalDefaultSubobject<UCapsuleComponent>(TEXT("Collision"));
 	RootComponent = m_Collision; // sets the root component to be the collider
+
+	m_Audio = CreateOptionalDefaultSubobject<UAudioComponent>(TEXT("Audio"));
+	m_Audio->SetupAttachment(RootComponent);
 
 	m_Sprite = CreateOptionalDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite0"));
 	if (m_Sprite)
@@ -43,8 +48,11 @@ void ABase_Collectibles::CollectibleCollision(UPrimitiveComponent* OverlappedCom
 
 	GEngine->AddOnScreenDebugMessage(-1, 2, FColor::Turquoise, FString(TEXT("Destroyed")));
 
-
-	Destroy(); // destroys the collectible when collided with the player
+	if (Cast<ABasePlayer>(OtherActor)) 
+	{
+		m_Audio->Play(); 
+		Destroy(); // destroys the collectible when collided with the player
+	}
 
 }
 

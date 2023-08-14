@@ -4,6 +4,7 @@
 #include "Restorative_Collectibles.h"
 #include "Side_Scroller_2D/Player/BasePlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/AudioComponent.h"
 
 
 ARestorative_Collectibles::ARestorative_Collectibles() : ABase_Collectibles()
