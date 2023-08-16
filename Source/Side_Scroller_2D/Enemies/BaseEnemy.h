@@ -65,6 +65,7 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 		bool m_isDead;
 
+
 	class ABaseEnemyController* m_EnemyController;
 
 };

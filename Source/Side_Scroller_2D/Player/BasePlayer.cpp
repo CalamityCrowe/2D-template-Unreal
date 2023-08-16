@@ -249,25 +249,28 @@ void ABasePlayer::MeleeInput()
 	}
 	else
 	{
-		switch (m_CurrentAttack)
+		if (GetCharacterMovement()->Velocity.Y != 0)
 		{
-		case AttackStates::None:
-			m_NextAttack = AttackStates::Attack1;
-			break;
-		case AttackStates::Attack1:
-			m_NextAttack = AttackStates::Attack2;
-			break;
-		case AttackStates::Attack2:
-			break;
-		}
-		isAttacking = true;
-		GetSprite()->SetLooping(false);
-		if (m_CurrentAttack == AttackStates::None)
-		{
-			m_CurrentAttack = m_NextAttack;
-			m_NextAttack = AttackStates::None;
-			m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			PlayAttackSound(); // calls the blueprints associated with this event 
+			switch (m_CurrentAttack)
+			{
+			case AttackStates::None:
+				m_NextAttack = AttackStates::Attack1;
+				break;
+			case AttackStates::Attack1:
+				m_NextAttack = AttackStates::Attack2;
+				break;
+			case AttackStates::Attack2:
+				break;
+			}
+			isAttacking = true;
+			GetSprite()->SetLooping(false);
+			if (m_CurrentAttack == AttackStates::None)
+			{
+				m_CurrentAttack = m_NextAttack;
+				m_NextAttack = AttackStates::None;
+				m_AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+				PlayAttackSound(); // calls the blueprints associated with this event 
+			}
 		}
 	}
 	m_AttackCollision->Activate();
