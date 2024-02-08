@@ -12,7 +12,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
-
+#include "Side_Scroller_2D/Component/PlayerAnimationComponent.h"
 
 
 // Sets default values
@@ -36,6 +36,9 @@ ABasePlayer::ABasePlayer()
 	m_Camera->SetupAttachment(m_SpringArmComponent);
 
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
+
+	PlayerAnimationComponent = CreateOptionalDefaultSubobject<UPlayerAnimationComponent>(TEXT("Animation Component"));
+	
 
 	m_AttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collision"));
 	m_AttackCollision->SetupAttachment(RootComponent);
@@ -175,6 +178,8 @@ void ABasePlayer::SetupAnimationStates()
 
 	}
 }
+
+
 
 void ABasePlayer::MoveRight(float AxisInput)
 {

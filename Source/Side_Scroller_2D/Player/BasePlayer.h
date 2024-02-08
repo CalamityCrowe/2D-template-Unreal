@@ -8,6 +8,8 @@
 #include "PaperCharacter.h"
 #include "BasePlayer.generated.h"
 
+class UPlayerAnimationComponent;
+
 UENUM(BlueprintType)
 enum class AttackStates :uint8
 {
@@ -41,13 +43,13 @@ public:
 
 #pragma region Blueprint event implementation
 	UFUNCTION(BlueprintImplementableEvent)
-		void PlayHitSound();
+	void PlayHitSound();
 	UFUNCTION(BlueprintImplementableEvent)
-		void PlayAttackSound();
+	void PlayAttackSound();
 	UFUNCTION(BlueprintImplementableEvent)
-		void SpeedBoostTimer(float timer);
+	void SpeedBoostTimer(float timer);
 	UFUNCTION(BlueprintImplementableEvent)
-		void StrengthBoostTimer(float timer);
+	void StrengthBoostTimer(float timer);
 #pragma endregion
 
 	void PlayerHurt();
@@ -72,14 +74,14 @@ protected:
 
 
 	UFUNCTION(BlueprintAuthorityOnly)
-		void FinishedAnimation_Attacking();
+	void FinishedAnimation_Attacking();
 	UFUNCTION(BlueprintAuthorityOnly)
-		void FinishedAnimation_Sliding();
+	void FinishedAnimation_Sliding();
 	UFUNCTION(BlueprintAuthorityOnly)
-		void FinishedAnimation_Hurt();
+	void FinishedAnimation_Hurt();
 
 	UFUNCTION()
-		void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
 
@@ -88,70 +90,74 @@ private:
 	void AnimateHealthChange();
 	void AnimateManaChange();
 
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Animation", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UPlayerAnimationComponent> PlayerAnimationComponent;
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_IdleAnimation;
+	class UPaperFlipbook* m_IdleAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_RunAnimation;
+	class UPaperFlipbook* m_RunAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_CrouchAnimation;
+	class UPaperFlipbook* m_CrouchAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_JumpAnimation;
+	class UPaperFlipbook* m_JumpAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_SlideAnimation;
+	class UPaperFlipbook* m_SlideAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_AttackAnimation1;
+	class UPaperFlipbook* m_AttackAnimation1;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_AttackAnimation2;
+	class UPaperFlipbook* m_AttackAnimation2;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_AttackAnimationSlide;
+	class UPaperFlipbook* m_AttackAnimationSlide;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_HurtAnimation;
+	class UPaperFlipbook* m_HurtAnimation;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Sprites")
-		class UPaperFlipbook* m_DeathAnimation;
+	class UPaperFlipbook* m_DeathAnimation;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio")
-		class UAudioComponent* m_Footsteps_Audio;
+	class UAudioComponent* m_Footsteps_Audio;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio")
-		class USoundBase* m_JumpSound;
+	class USoundBase* m_JumpSound;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-		TSubclassOf<class ABaseProjectile> m_Projectile;
+	TSubclassOf<class ABaseProjectile> m_Projectile;
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
-		class USphereComponent* m_ProjectileSpawn;
+	class USphereComponent* m_ProjectileSpawn;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision")
-		class USphereComponent* m_AttackCollision;
+	class USphereComponent* m_AttackCollision;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
-		class UCameraComponent* m_Camera;
+	class UCameraComponent* m_Camera;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
-		USpringArmComponent* m_SpringArmComponent;
+	USpringArmComponent* m_SpringArmComponent;
 
 	bool isSliding;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack")
-		bool isAttacking;
+	bool isAttacking;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-		float m_Health;
+	float m_Health;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-		float m_newHealth;
+	float m_newHealth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
-		float m_Mana;
+	float m_Mana;
 	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Stats")
-		float m_newMana;
+	float m_newMana;
 
 	float m_MaxHealth, m_MaxMana;
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states")
-		TEnumAsByte<AttackStates> m_CurrentAttack;
+	TEnumAsByte<AttackStates> m_CurrentAttack;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states")
-		TEnumAsByte<AttackStates> m_NextAttack;
+	TEnumAsByte<AttackStates> m_NextAttack;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-		bool m_isHurt;
+	bool m_isHurt;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-		bool m_HurtFlash;
+	bool m_HurtFlash;
 
 	bool m_PlayDeath = true;
 
@@ -167,12 +173,12 @@ public:
 	USpringArmComponent* GetSpringArmComponent() { return m_SpringArmComponent; }
 
 	UFUNCTION(BlueprintPure)
-		float HealthPercentage()
+	float HealthPercentage()
 	{
 		return m_Health / m_MaxHealth;
 	}
 	UFUNCTION(BlueprintPure)
-		float ManaPercentage()
+	float ManaPercentage()
 	{
 		return m_Mana / m_MaxMana;
 	}
