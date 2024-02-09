@@ -38,18 +38,18 @@ void ABaseLevelTemplate::Tick(float DeltaTime)
 		if (m_PlayerRef->GetActorLocation().X <= m_ViewportSize.X / 4)
 		{
 			//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, TEXT("Left"));
-			m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->GetSocket().X, sqrt(pow((m_ViewportSize.X / 4) - m_PlayerRef->GetActorLocation().X, 2)), m_PlayerRef->GetSocket().Z);
+			m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->SocketLocation.X, sqrt(pow((m_ViewportSize.X / 4) - m_PlayerRef->GetActorLocation().X, 2)), m_PlayerRef->SocketLocation.Z);
 			m_PlayerRef->GetSpringArmComponent()->bEnableCameraLag = false;
 		}
 		else if (m_PlayerRef->GetActorLocation().X >= (m_MapWidth * m_TileWidth) - (m_ViewportSize.X / 4))
 		{
 			//GEngine->AddOnScreenDebugMessage(-1, .01f, FColor::Red, TEXT("Right"));
-			m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->GetSocket().X, sqrt(pow(((m_MapWidth * m_TileWidth) - (m_ViewportSize.X / 4)) - m_PlayerRef->GetActorLocation().X, 2)), m_PlayerRef->GetSocket().Z);
+			m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->SocketLocation.X, sqrt(pow(((m_MapWidth * m_TileWidth) - (m_ViewportSize.X / 4)) - m_PlayerRef->GetActorLocation().X, 2)), m_PlayerRef->SocketLocation.Z);
 			m_PlayerRef->GetSpringArmComponent()->bEnableCameraLag = false;
 		}
 		else
 		{
-			m_PlayerRef->GetSpringArmComponent()->SocketOffset = m_PlayerRef->GetSocket();
+			m_PlayerRef->GetSpringArmComponent()->SocketOffset = m_PlayerRef->SocketLocation;
 			m_PlayerRef->GetSpringArmComponent()->bEnableCameraLag = true;
 		}
 	}

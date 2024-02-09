@@ -13,12 +13,6 @@
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Side_Scroller_2D/Component/PlayerAnimationComponent.h"
-#include "Side_Scroller_2D/Inputs/InputConfigData.h"
-
-#include "Components/InputComponent.h"
-#include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "InputMappingContext.h"
 
 
 // Sets default values
@@ -98,7 +92,7 @@ void ABasePlayer::UpdateRotations()
 void ABasePlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	
 	if (bHurt == false)
 	{
 		UpdateRotations();
@@ -130,30 +124,8 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
-	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
+	if (InputComponent)
 	{
-		if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer()) // gets the local player from the controller
-		{
-			if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())  // gets the enhanced input from the local input system
-			{
-				InputSystem->ClearAllMappings(); // clears any mapping contexts if they had been assigned by mistake
-				InputSystem->AddMappingContext(InputMappingContext, 0); // assigns the mapping contexts as the highest priority
-			}
-		}
-	}
-
-	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent)) // attempts to cast to the enhanced input system
-	{
-
-
-		if (InputData)
-		{
-			PEI->BindAction(InputData->IA_Movement, ETriggerEvent::Triggered, this, &ABasePlayer::MovePlayer);
-			PEI->BindAction(InputData->IA_Jump, ETriggerEvent::Started, this, &ABasePlayer::Jump);
-			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Started, this, &ABasePlayer::CrouchInput); 
-			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Completed, this, &ABasePlayer::UnCrouchInput); 
-		}
-
 	}
 
 
@@ -172,7 +144,7 @@ void ABasePlayer::SetupAnimationStates()
 	}
 }
 
-void ABasePlayer::CrouchInput(const FInputActionValue&)
+void ABasePlayer::CrouchInput()
 {
 
 	if (abs(GetCharacterMovement()->Velocity.X) > 0 && GetCharacterMovement()->IsFalling() == false)
@@ -186,7 +158,7 @@ void ABasePlayer::CrouchInput(const FInputActionValue&)
 
 }
 
-void ABasePlayer::UnCrouchInput(const FInputActionValue&)
+void ABasePlayer::UnCrouchInput()
 {
 	if (GetCharacterMovement()->IsCrouching())
 	{
@@ -272,15 +244,6 @@ void ABasePlayer::PlayerHurt()
 	GetSprite()->SetLooping(false);
 	newHealth -= 10;
 
-}
-
-void ABasePlayer::MovePlayer(const FInputActionValue& Val)
-{
-	const FVector2D InputAxis = Val.Get<FVector2D>(); // returns the input axis value
-	if (Controller)
-	{
-		AddMovementInput(Camera->GetRightVector(), InputAxis.X);
-	}
 }
 
 void ABasePlayer::Jump()

@@ -8,9 +8,6 @@
 #include "PaperCharacter.h"
 #include "BasePlayer.generated.h"
 
-class UInputMappingContext;
-struct FInputActionValue;
-class UInputConfigData;
 class UCameraComponent;
 class USphereComponent;
 class ABaseProjectile;
@@ -59,17 +56,12 @@ public:
 
 	void PlayerHurt();
 
-private:
-	void MovePlayer(const FInputActionValue&);
-
 protected:
-
-
 
 	void SetupAnimationStates();
 
-	void CrouchInput(const FInputActionValue&);
-	void UnCrouchInput(const FInputActionValue&);
+	void CrouchInput();
+	void UnCrouchInput();
 	void LaunchPlayer(float X, float Vert);
 	void Sliding();
 	void MeleeInput();
@@ -149,11 +141,13 @@ protected:
 
 	bool PlayDeath = true;
 
+	float FlashMax;
 
 
 
 public:
 
+	FVector SocketLocation;
 
 
 	USpringArmComponent* GetSpringArmComponent() { return SpringArmComponent; }
@@ -175,16 +169,5 @@ public:
 	void RecoverMana(float M = 0) { newMana += M; }
 
 
-	FVector GetSocket() const { return SocketLocation; }
-
 	bool isHurt() { return bHurt; }
-
-private:
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputConfigData> InputData;
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UInputMappingContext> InputMappingContext;
-
-	FVector SocketLocation;
-
 };
