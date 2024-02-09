@@ -64,6 +64,9 @@ ABasePlayer::ABasePlayer()
 	MaxMana = 100;
 	Mana = MaxMana;
 	newMana = MaxMana;
+
+	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
+
 }
 
 // Called when the game starts or when spawned
@@ -71,7 +74,6 @@ void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	SetupAnimationStates();
-	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	SocketLocation = SpringArmComponent->SocketOffset;
@@ -151,7 +153,11 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 			PEI->BindAction(InputData->IA_Movement, ETriggerEvent::Triggered, this, &ABasePlayer::MovePlayer);
 			PEI->BindAction(InputData->IA_Jump, ETriggerEvent::Started, this, &ABasePlayer::Jump);
 			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Started, this, &ABasePlayer::CrouchInput); 
-			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Completed, this, &ABasePlayer::UnCrouchInput); 
+			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Completed, this, &ABasePlayer::UnCrouchInput);
+			PEI->BindAction(InputData->IA_FireProjectile, ETriggerEvent::Started, this, &ABasePlayer::FireProjectile); 
+			PEI->BindAction(InputData->IA_Attack, ETriggerEvent::Started, this, &ABasePlayer::MeleeInput); 
+			
+			
 		}
 
 	}
