@@ -103,7 +103,7 @@ void ABaseEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 	{
 		if (ABasePlayer* tempPlayer = Cast<ABasePlayer>(OtherActor))
 		{
-			if (tempPlayer->isHurt() == false)
+			if (tempPlayer->IsHurt() == false)
 			{
 				tempPlayer->PlayerHurt(); // calls the function to hurt the player
 				float X_Force = (tempPlayer->GetActorLocation().X - GetActorLocation().X > 0) ? 1 : -1; // checks which direction it should launch the player

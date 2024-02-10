@@ -54,8 +54,8 @@ ABasePlayer::ABasePlayer()
 	Footsteps_Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Footsteps Audio"));
 
 
-	isSliding = false;
-	isAttacking = false;
+	bSliding = false;
+	bAttacking = false;
 
 
 	MaxHealth = 100;
@@ -152,11 +152,10 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		{
 			PEI->BindAction(InputData->IA_Movement, ETriggerEvent::Triggered, this, &ABasePlayer::MovePlayer);
 			PEI->BindAction(InputData->IA_Jump, ETriggerEvent::Started, this, &ABasePlayer::Jump);
-			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Started, this, &ABasePlayer::CrouchInput); 
-			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Completed, this, &ABasePlayer::UnCrouchInput);
-			PEI->BindAction(InputData->IA_FireProjectile, ETriggerEvent::Started, this, &ABasePlayer::FireProjectile); 
-			PEI->BindAction(InputData->IA_Attack, ETriggerEvent::Started, this, &ABasePlayer::MeleeInput); 
-			
+			//PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Started, this, &ABasePlayer::CrouchInput); 
+			//PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Completed, this, &ABasePlayer::UnCrouchInput);
+			//PEI->BindAction(InputData->IA_FireProjectile, ETriggerEvent::Started, this, &ABasePlayer::FireProjectile); 
+			//PEI->BindAction(InputData->IA_Attack, ETriggerEvent::Started, this, &ABasePlayer::MeleeInput); 
 			
 		}
 
@@ -211,16 +210,16 @@ void ABasePlayer::LaunchPlayer(float X, float Vert)
 void ABasePlayer::Sliding()
 {
 	LaunchPlayer(1, 1);
-	isSliding = true;
+	bSliding = true;
 	GetSprite()->SetLooping(false);
 }
 
 void ABasePlayer::MeleeInput()
 {
-	if (isSliding)
+	if (bSliding)
 	{
 		LaunchPlayer(300, 300);
-		isAttacking = true;
+		bAttacking = true;
 		GetSprite()->SetLooping(false);
 		AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 		PlayAttackSound();
@@ -240,7 +239,7 @@ void ABasePlayer::MeleeInput()
 			case AttackStates::Attack2:
 				break;
 			}
-			isAttacking = true;
+			bAttacking = true;
 			GetSprite()->SetLooping(false);
 			if (CurrentAttack == AttackStates::None)
 			{
@@ -291,7 +290,7 @@ void ABasePlayer::MovePlayer(const FInputActionValue& Val)
 
 void ABasePlayer::Jump()
 {
-	if (isSliding == false)
+	if (bSliding == false)
 	{
 		ACharacter::Jump();
 		if (GetCharacterMovement()->IsFalling() == false)
@@ -304,22 +303,22 @@ void ABasePlayer::Jump()
 void ABasePlayer::FinishedAnimation_Attacking()
 {
 
-	if (isAttacking && isSliding)
+	if (bAttacking && bSliding)
 	{
-		isAttacking = false;
-		isSliding = false;
+		bAttacking = false;
+		bSliding = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 		AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	}
-	else if (isAttacking)
+	else if (bAttacking)
 	{
 
 		switch (NextAttack)
 		{
 		case AttackStates::None:
-			isAttacking = false;
+			bAttacking = false;
 			CurrentAttack = AttackStates::None;
 			GetSprite()->SetLooping(true);
 			GetSprite()->Play();
@@ -343,9 +342,9 @@ void ABasePlayer::FinishedAnimation_Attacking()
 }
 void ABasePlayer::FinishedAnimation_Sliding()
 {
-	if (isSliding && isAttacking == false)
+	if (bSliding && bAttacking == false)
 	{
-		isSliding = false;
+		bSliding = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 	}

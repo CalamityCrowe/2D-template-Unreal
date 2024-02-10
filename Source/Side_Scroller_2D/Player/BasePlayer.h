@@ -38,13 +38,13 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	void UpdateRotations();
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+public:
 
 #pragma region Blueprint event implementation
 	UFUNCTION(BlueprintImplementableEvent)
@@ -60,33 +60,27 @@ public:
 	void PlayerHurt();
 
 private:
+
 	void MovePlayer(const FInputActionValue&);
-
-protected:
-
-
-
-	void SetupAnimationStates();
-
 	void CrouchInput(const FInputActionValue&);
 	void UnCrouchInput(const FInputActionValue&);
-	void LaunchPlayer(float X, float Vert);
-	void Sliding();
-	void MeleeInput();
-
-	void FireProjectile();
-
-
-
 	virtual void Jump() override;
 
 
+	void FireProjectile();
+	void LaunchPlayer(float X, float Vert);
+	void MeleeInput();
+	void Sliding();
+	void SetupAnimationStates();
+	void UpdateRotations();
 
-	UFUNCTION(BlueprintAuthorityOnly)
+
+protected:
+	UFUNCTION()
 	void FinishedAnimation_Attacking();
-	UFUNCTION(BlueprintAuthorityOnly)
+	UFUNCTION()
 	void FinishedAnimation_Sliding();
-	UFUNCTION(BlueprintAuthorityOnly)
+	UFUNCTION()
 	void FinishedAnimation_Hurt();
 
 	UFUNCTION()
@@ -103,45 +97,46 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Animation", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UPlayerAnimationComponent> PlayerAnimationComponent;
 
-protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio")
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UAudioComponent> Footsteps_Audio;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USoundBase> JumpSound;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile", meta = (AllowPrivateAccess = true))
 	TSubclassOf<ABaseProjectile> Projectile;
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile")
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile",meta = (AllowPrivateAccess = true))
 	TObjectPtr<USphereComponent> ProjectileSpawn;
-	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision")
+	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USphereComponent> AttackCollision;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> Camera;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera",meta = (AllowPrivateAccess = true))
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 
-	bool isSliding;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack")
-	bool isAttacking;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
 	float Health;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
 	float newHealth;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
 	float Mana;
-	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Stats")
+	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
 	float newMana;
 
 	float MaxHealth, MaxMana;
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states",meta = (AllowPrivateAccess = true))
 	TEnumAsByte<AttackStates> CurrentAttack;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states",meta = (AllowPrivateAccess = true))
 	TEnumAsByte<AttackStates> NextAttack;
 
+protected:
+	bool bSliding;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack")
+	bool bAttacking;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
 	bool bHurt;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
@@ -177,7 +172,9 @@ public:
 
 	FVector GetSocket() const { return SocketLocation; }
 
-	bool isHurt() { return bHurt; }
+	bool IsHurt() const { return bHurt; }
+	bool IsSliding() const { return bSliding; }
+	bool IsAttacking() const { return bAttacking; }
 
 private:
 	UPROPERTY(EditDefaultsOnly)
