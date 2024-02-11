@@ -16,6 +16,12 @@ class SIDE_SCROLLER_2D_API UU2D_AnimationData : public UDataAsset
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly)
-	TArray<TObjectPtr<UPaperFlipbook>> AnimationArray; 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category= "Movement")
+	TArray<TObjectPtr<UPaperFlipbook>> Movement_Animations; 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category= "Attacks")
+	TArray<TObjectPtr<UPaperFlipbook>> Attack_Animations; 
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category= "Miscellaneous")
+	TArray<TObjectPtr<UPaperFlipbook>> Miscellaneous_Animations;
+	
+															
 };

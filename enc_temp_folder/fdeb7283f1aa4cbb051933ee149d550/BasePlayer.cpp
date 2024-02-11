@@ -67,6 +67,7 @@ ABasePlayer::ABasePlayer()
 
 	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
 
+	GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation);
 
 }
 
@@ -74,7 +75,6 @@ ABasePlayer::ABasePlayer()
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation);
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	SocketLocation = SpringArmComponent->SocketOffset;
@@ -312,12 +312,11 @@ void ABasePlayer::Jump()
 
 void ABasePlayer::FinishedAnimation()
 {
-	if (bSliding && (bAttacking == false))
+	if (bSliding && bAttacking == false)
 	{
 		bSliding = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
-		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Sliding Not Attacking"));
 	}
 	else if (bAttacking && bSliding)
 	{
@@ -326,7 +325,6 @@ void ABasePlayer::FinishedAnimation()
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 		AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Sliding Attacking"));
 
 	}
 	else if (bAttacking)
@@ -352,7 +350,6 @@ void ABasePlayer::FinishedAnimation()
 			break;
 
 		}
-		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Attacking"));
 
 	}
 	else if (bHurt)
@@ -361,7 +358,6 @@ void ABasePlayer::FinishedAnimation()
 		HurtFlash = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
-		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Hurt"));
 	}
 
 

@@ -17,7 +17,7 @@ class ABaseProjectile;
 class UPlayerAnimationComponent;
 
 UENUM(BlueprintType)
-enum class AttackStates :uint8
+enum class EAttackStates :uint8
 {
 	None UMETA(DisplayName = "None"),
 	Attack1 UMETA(DisplayName = "Attack1"),
@@ -71,17 +71,14 @@ private:
 	void LaunchPlayer(float X, float Vert);
 	void MeleeInput();
 	void Sliding();
-	void SetupAnimationStates();
 	void UpdateRotations();
 
 
 protected:
+
 	UFUNCTION()
-	void FinishedAnimation_Attacking();
-	UFUNCTION()
-	void FinishedAnimation_Sliding();
-	UFUNCTION()
-	void FinishedAnimation_Hurt();
+	void FinishedAnimation();
+
 
 	UFUNCTION()
 	void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -105,33 +102,33 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile", meta = (AllowPrivateAccess = true))
 	TSubclassOf<ABaseProjectile> Projectile;
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, Category = "Projectile", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USphereComponent> ProjectileSpawn;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USphereComponent> AttackCollision;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> Camera;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
 	float Health;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
 	float newHealth;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
 	float Mana;
-	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Stats",meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BluePrintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
 	float newMana;
 
 	float MaxHealth, MaxMana;
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states",meta = (AllowPrivateAccess = true))
-	TEnumAsByte<AttackStates> CurrentAttack;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states",meta = (AllowPrivateAccess = true))
-	TEnumAsByte<AttackStates> NextAttack;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states", meta = (AllowPrivateAccess = true))
+	TEnumAsByte<EAttackStates> CurrentAttack;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states", meta = (AllowPrivateAccess = true))
+	TEnumAsByte<EAttackStates> NextAttack;
 
 protected:
 	bool bSliding;
@@ -154,15 +151,17 @@ public:
 	USpringArmComponent* GetSpringArmComponent() { return SpringArmComponent; }
 
 	UFUNCTION(BlueprintPure)
-	float HealthPercentage()
+	float HealthPercentage() const
 	{
 		return Health / MaxHealth;
 	}
 	UFUNCTION(BlueprintPure)
-	float ManaPercentage()
+	float ManaPercentage() const
 	{
 		return Mana / MaxMana;
 	}
+
+	float GetHealth()const { return Health; }
 
 	void IncreaseMaxHealth(float MH = 0) { MaxHealth += MH; newHealth += MH / 2; }
 	void IncreaseMaxMana(float MM = 0) { MaxMana += MM; newMana += MM / 2; }
@@ -175,6 +174,8 @@ public:
 	bool IsHurt() const { return bHurt; }
 	bool IsSliding() const { return bSliding; }
 	bool IsAttacking() const { return bAttacking; }
+
+	TEnumAsByte<EAttackStates> GetCurrentAttack() const { return CurrentAttack; }
 
 private:
 	UPROPERTY(EditDefaultsOnly)
