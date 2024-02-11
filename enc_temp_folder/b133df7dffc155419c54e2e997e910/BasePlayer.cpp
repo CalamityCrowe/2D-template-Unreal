@@ -19,6 +19,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Side_Scroller_2D/Component/WeaponAttachment.h"
 
 
 // Sets default values
@@ -48,8 +49,8 @@ ABasePlayer::ABasePlayer()
 
 	AttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collision"));
 	AttackCollision->SetupAttachment(RootComponent);
-	ProjectileSpawn = CreateDefaultSubobject<USphereComponent>(TEXT("Projectile Spawn"));
-	ProjectileSpawn->SetupAttachment(RootComponent);
+	WeaponSpawn = CreateOptionalDefaultSubobject<UWeaponAttachment>(TEXT("Weapon Spawn"));
+	WeaponSpawn->SetupAttachment(RootComponent); 
 
 	Footsteps_Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Footsteps Audio"));
 
@@ -67,7 +68,6 @@ ABasePlayer::ABasePlayer()
 
 	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
 
-	GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation);
 
 }
 
@@ -75,6 +75,7 @@ ABasePlayer::ABasePlayer()
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
+	GetSprite()->OnFinishedPlaying.AddDynamic(this, &ABasePlayer::FinishedAnimation);
 	AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	SocketLocation = SpringArmComponent->SocketOffset;
@@ -147,19 +148,21 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent)) // attempts to cast to the enhanced input system
 	{
-
-
 		if (InputData)
 		{
 			PEI->BindAction(InputData->IA_Movement, ETriggerEvent::Triggered, this, &ABasePlayer::MovePlayer);
 			PEI->BindAction(InputData->IA_Jump, ETriggerEvent::Started, this, &ABasePlayer::Jump);
 			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Started, this, &ABasePlayer::CrouchInput);
 			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Completed, this, &ABasePlayer::UnCrouchInput);
-			PEI->BindAction(InputData->IA_FireProjectile, ETriggerEvent::Started, this, &ABasePlayer::FireProjectile);
 			PEI->BindAction(InputData->IA_Attack, ETriggerEvent::Started, this, &ABasePlayer::MeleeInput);
 
 		}
 
+	}
+
+	if(WeaponSpawn)
+	{
+		WeaponSpawn->SetupInput(this); 
 	}
 
 
@@ -244,22 +247,6 @@ void ABasePlayer::MeleeInput()
 }
 
 
-void ABasePlayer::FireProjectile()
-{
-	if (Mana > 0 && ProjectileSpawn)
-	{
-		const FRotator SpawnRotation = GetControlRotation();
-		const FVector SpawnLocation = ProjectileSpawn->GetComponentLocation();
-		FActorSpawnParameters spawnParam;
-		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		if (ABaseProjectile* proj = GetWorld()->SpawnActor<ABaseProjectile>(Projectile, SpawnLocation, SpawnRotation, spawnParam))
-		{
-			newMana -= 10;
-			proj = nullptr;
-		}
-	}
-}
-
 void ABasePlayer::PlayerHurt()
 {
 	HurtFlash = true;
@@ -312,11 +299,12 @@ void ABasePlayer::Jump()
 
 void ABasePlayer::FinishedAnimation()
 {
-	if (bSliding && bAttacking == false)
+	if (bSliding && (bAttacking == false))
 	{
 		bSliding = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
+		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Sliding Not Attacking"));
 	}
 	else if (bAttacking && bSliding)
 	{
@@ -325,6 +313,7 @@ void ABasePlayer::FinishedAnimation()
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
 		AttackCollision->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Sliding Attacking"));
 
 	}
 	else if (bAttacking)
@@ -350,6 +339,7 @@ void ABasePlayer::FinishedAnimation()
 			break;
 
 		}
+		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Attacking"));
 
 	}
 	else if (bHurt)
@@ -358,6 +348,7 @@ void ABasePlayer::FinishedAnimation()
 		HurtFlash = false;
 		GetSprite()->SetLooping(true);
 		GetSprite()->Play();
+		GEngine->AddOnScreenDebugMessage(-22, 10, FColor::Cyan, TEXT("Hurt"));
 	}
 
 

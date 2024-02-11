@@ -19,6 +19,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Side_Scroller_2D/Component/WeaponAttachment.h"
 
 
 // Sets default values
@@ -48,8 +49,8 @@ ABasePlayer::ABasePlayer()
 
 	AttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collision"));
 	AttackCollision->SetupAttachment(RootComponent);
-	ProjectileSpawn = CreateDefaultSubobject<USphereComponent>(TEXT("Projectile Spawn"));
-	ProjectileSpawn->SetupAttachment(RootComponent);
+	WeaponSpawn = CreateOptionalDefaultSubobject<UWeaponAttachment>(TEXT("Weapon Spawn"));
+	WeaponSpawn->SetupAttachment(RootComponent);
 
 	Footsteps_Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Footsteps Audio"));
 
@@ -147,19 +148,21 @@ void ABasePlayer::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PlayerInputComponent)) // attempts to cast to the enhanced input system
 	{
-
-
 		if (InputData)
 		{
 			PEI->BindAction(InputData->IA_Movement, ETriggerEvent::Triggered, this, &ABasePlayer::MovePlayer);
 			PEI->BindAction(InputData->IA_Jump, ETriggerEvent::Started, this, &ABasePlayer::Jump);
 			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Started, this, &ABasePlayer::CrouchInput);
 			PEI->BindAction(InputData->IA_Crouch, ETriggerEvent::Completed, this, &ABasePlayer::UnCrouchInput);
-			PEI->BindAction(InputData->IA_FireProjectile, ETriggerEvent::Started, this, &ABasePlayer::FireProjectile);
 			PEI->BindAction(InputData->IA_Attack, ETriggerEvent::Started, this, &ABasePlayer::MeleeInput);
 
 		}
 
+	}
+
+	if (WeaponSpawn)
+	{
+		WeaponSpawn->SetupInput(this);
 	}
 
 
@@ -216,7 +219,7 @@ void ABasePlayer::MeleeInput()
 	}
 	else
 	{
-		if (GetCharacterMovement()->Velocity.Y != 0)
+		if (GetCharacterMovement()->Velocity.Y == 0)
 		{
 			switch (CurrentAttack)
 			{
@@ -240,25 +243,9 @@ void ABasePlayer::MeleeInput()
 			}
 		}
 	}
-	AttackCollision->Activate();
+	AttackCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 }
 
-
-void ABasePlayer::FireProjectile()
-{
-	if (Mana > 0 && ProjectileSpawn)
-	{
-		const FRotator SpawnRotation = GetControlRotation();
-		const FVector SpawnLocation = ProjectileSpawn->GetComponentLocation();
-		FActorSpawnParameters spawnParam;
-		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		if (ABaseProjectile* proj = GetWorld()->SpawnActor<ABaseProjectile>(Projectile, SpawnLocation, SpawnRotation, spawnParam))
-		{
-			newMana -= 10;
-			proj = nullptr;
-		}
-	}
-}
 
 void ABasePlayer::PlayerHurt()
 {

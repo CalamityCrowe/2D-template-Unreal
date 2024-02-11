@@ -8,6 +8,7 @@
 #include "PaperCharacter.h"
 #include "BasePlayer.generated.h"
 
+class UWeaponAttachment;
 class UInputMappingContext;
 struct FInputActionValue;
 class UInputConfigData;
@@ -67,7 +68,6 @@ private:
 	virtual void Jump() override;
 
 
-	void FireProjectile();
 	void LaunchPlayer(float X, float Vert);
 	void MeleeInput();
 	void Sliding();
@@ -84,8 +84,6 @@ protected:
 	void AttackOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
-
-
 private:
 	void AnimateHealthChange();
 	void AnimateManaChange();
@@ -100,12 +98,11 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Player Audio", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USoundBase> JumpSound;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile", meta = (AllowPrivateAccess = true))
-	TSubclassOf<ABaseProjectile> Projectile;
-	UPROPERTY(EditDefaultsOnly, Category = "Projectile", meta = (AllowPrivateAccess = true))
-	TObjectPtr<USphereComponent> ProjectileSpawn;
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USphereComponent> AttackCollision;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Projectiles", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UWeaponAttachment> WeaponSpawn; 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> Camera;
@@ -162,11 +159,13 @@ public:
 	}
 
 	float GetHealth()const { return Health; }
+	float GetMana()const { return Mana;  }
 
 	void IncreaseMaxHealth(float MH = 0) { MaxHealth += MH; newHealth += MH / 2; }
 	void IncreaseMaxMana(float MM = 0) { MaxMana += MM; newMana += MM / 2; }
 	void RecoverHealth(float H = 0) { newHealth += H; }
 	void RecoverMana(float M = 0) { newMana += M; }
+	void ReduceMana(float M) { newMana -= M; }
 
 
 	FVector GetSocket() const { return SocketLocation; }
@@ -184,5 +183,7 @@ private:
 	TObjectPtr<UInputMappingContext> InputMappingContext;
 
 	FVector SocketLocation;
+public:
+	TObjectPtr<UInputConfigData> GetInputData() const { return InputData; }
 
 };
