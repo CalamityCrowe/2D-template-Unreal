@@ -30,17 +30,27 @@ void UWeaponAttachment::BeginPlay()
 
 }
 
+///<summary> Setup Input function
+///
+///<para> This is how you would go about binding a function to the players input from within a component that gets attached to the player without
+///		  creating a function in the player to call the spawn logic from within here	
+///
+///		  this has been made virtual in case an additional layer of inheritance needs to be made for a new mapping context to be added for the relevant inputs to be used correctly
+///
+///</summary>
+
+
 void UWeaponAttachment::SetupInput(ABasePlayer* PR)
 {
 	if (PR == nullptr)
 	{
 		return;
 	}
-	if (APlayerController* PC = Cast<APlayerController>(PR->GetController()))
+	if (APlayerController* PC = Cast<APlayerController>(PR->GetController())) 
 	{
 		if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PC->InputComponent))
 		{
-			PEI->BindAction(PR->GetInputData()->IA_FireProjectile, ETriggerEvent::Started, this, &UWeaponAttachment::SpawnProjectile);
+			PEI->BindAction(PR->GetInputData()->IA_FireProjectile, ETriggerEvent::Started, this, &UWeaponAttachment::SpawnProjectile); 
 		}
 	}
 
