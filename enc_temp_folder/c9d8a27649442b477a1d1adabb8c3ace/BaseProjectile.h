@@ -20,20 +20,18 @@ protected:
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
-	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit);
-	UFUNCTION()
-	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+		void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile Movement")
-	class UProjectileMovementComponent* m_ProjectileMovement;
+		class UProjectileMovementComponent* m_ProjectileMovement;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile Sprite")
-	class UPaperFlipbookComponent* m_ProjectileSprite;
+		class UPaperFlipbookComponent* m_ProjectileSprite;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile Collision")
-	class USphereComponent* m_Collision;
+		class USphereComponent* m_Collision;
 
 };
