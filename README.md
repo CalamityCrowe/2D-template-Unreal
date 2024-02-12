@@ -1,3 +1,5 @@
+This will need to be opened using unreal 5.2 or newer specifically first as there is an issue with a custom plug-in not wanting to compile from vs,after that it compiles fine. 
+
 A template that is going to be used as a base for all the 2D games that gets made later in Unreal for myself.
 
 It has a system setup to clamp the camera to the map for when the player is at the edge of the map. 
