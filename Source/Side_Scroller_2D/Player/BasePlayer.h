@@ -62,7 +62,7 @@ public:
 
 private:
 
-	void MovePlayer(const FInputActionValue&);
+	virtual void MovePlayer(const FInputActionValue&);
 	void CrouchInput(const FInputActionValue&);
 	void UnCrouchInput(const FInputActionValue&);
 	virtual void Jump() override;
