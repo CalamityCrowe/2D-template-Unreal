@@ -24,7 +24,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
+protected:
 	virtual void MovePlayer(const FInputActionValue&) override;
 
 };

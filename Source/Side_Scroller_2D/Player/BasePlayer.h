@@ -60,7 +60,7 @@ public:
 
 	void PlayerHurt();
 
-private:
+
 
 	virtual void MovePlayer(const FInputActionValue&);
 	void CrouchInput(const FInputActionValue&);
@@ -74,8 +74,8 @@ private:
 	void UpdateRotations();
 
 
-protected:
 
+protected:
 	UFUNCTION()
 	void FinishedAnimation();
 
@@ -176,7 +176,9 @@ public:
 
 	TEnumAsByte<EAttackStates> GetCurrentAttack() const { return CurrentAttack; }
 
-private:
+	UCameraComponent* GetCamera() const { return Camera;  }
+
+protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UInputConfigData> InputData;
 	UPROPERTY(EditDefaultsOnly)

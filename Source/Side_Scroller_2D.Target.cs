@@ -9,7 +9,7 @@ public class Side_Scroller_2DTarget : TargetRules
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V2;
-
+		IncludeOrderVersion = EngineIncludeOrderVersion.Latest; 
 		ExtraModuleNames.AddRange( new string[] { "Side_Scroller_2D" } );
 	}
 }
