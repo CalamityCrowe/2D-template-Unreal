@@ -17,11 +17,11 @@ class SIDE_SCROLLER_2D_API UU2D_AnimationData : public UDataAsset
 	
 public:
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category= "Movement")
-	TArray<TObjectPtr<UPaperFlipbook>> Movement_Animations; 
+	TArray<UPaperFlipbook*> Movement_Animations; 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category= "Attacks")
-	TArray<TObjectPtr<UPaperFlipbook>> Attack_Animations; 
+	TArray<UPaperFlipbook*> Attack_Animations; 
 	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category= "Miscellaneous")
-	TArray<TObjectPtr<UPaperFlipbook>> Miscellaneous_Animations;
+	TArray<UPaperFlipbook*> Miscellaneous_Animations;
 	
 															
 };

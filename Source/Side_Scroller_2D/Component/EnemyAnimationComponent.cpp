@@ -12,7 +12,7 @@ UEnemyAnimationComponent::UEnemyAnimationComponent()
 void UEnemyAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	if(EnemyRef = Cast<ABaseEnemy>(GetOwner()))
+	if((EnemyRef = Cast<ABaseEnemy>(GetOwner())))
 	{
 		GEngine->AddOnScreenDebugMessage(74, 2, FColor::Cyan, TEXT("Enemy Ref Set"));
 

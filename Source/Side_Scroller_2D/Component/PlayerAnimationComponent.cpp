@@ -18,7 +18,7 @@ void UPlayerAnimationComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (PlayerRef = Cast<ABasePlayer>(GetOwner()))
+	if ((PlayerRef = Cast<ABasePlayer>(GetOwner())))
 	{
 		GEngine->AddOnScreenDebugMessage(74, 2, FColor::Cyan, TEXT("Player Ref Set"));
 	}
