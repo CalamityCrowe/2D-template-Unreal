@@ -33,5 +33,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Ref")
 		class ABasePlayer* m_PlayerRef; 
 
-	FIntPoint m_ViewportSize; 
+	FIntPoint m_ViewportSize;
+
+private:
+	
+	void FadeLevelIn();
+
 };

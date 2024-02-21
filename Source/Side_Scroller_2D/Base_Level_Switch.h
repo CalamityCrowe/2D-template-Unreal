@@ -24,10 +24,7 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void FadeLevelIn();
-	UFUNCTION(BlueprintImplementableEvent)
-	void FadeLevelOut();
+
 
 public:
 	// Called every frame
@@ -35,7 +32,7 @@ public:
 
 private:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Level Reference", meta = (AllowPrivateAccess = true))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level Reference", meta = (AllowPrivateAccess = true))
 	TSoftObjectPtr<UWorld> LevelReference;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Mesh", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UStaticMeshComponent> Mesh;
@@ -44,5 +41,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<ABasePlayer> PlayerReference;
 
+	UFUNCTION()
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 };

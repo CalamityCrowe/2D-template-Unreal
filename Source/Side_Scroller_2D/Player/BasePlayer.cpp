@@ -80,6 +80,11 @@ void ABasePlayer::BeginPlay()
 
 	SocketLocation = SpringArmComponent->SocketOffset;
 
+	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
+	{
+		PC->PlayerCameraManager->StartCameraFade(1, 0, 5, FColor::Black, true, false);
+	}
+
 }
 
 
