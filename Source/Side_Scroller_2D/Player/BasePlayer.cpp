@@ -19,6 +19,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "Components/CapsuleComponent.h"
 #include "Side_Scroller_2D/Component/WeaponAttachment.h"
 
 
@@ -50,7 +51,7 @@ ABasePlayer::ABasePlayer()
 	AttackCollision = CreateDefaultSubobject<USphereComponent>(TEXT("Attack Collision"));
 	AttackCollision->SetupAttachment(RootComponent);
 	WeaponSpawn = CreateOptionalDefaultSubobject<UWeaponAttachment>(TEXT("Weapon Spawn"));
-	WeaponSpawn->SetupAttachment(RootComponent);
+	WeaponSpawn->SetupAttachment(GetCapsuleComponent());
 
 	Footsteps_Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Footsteps Audio"));
 
