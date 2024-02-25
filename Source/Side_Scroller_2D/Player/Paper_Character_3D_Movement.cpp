@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "Camera/CameraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Side_Scroller_2D/Component/WeaponAttachment.h"
 #include "Side_Scroller_2D/Inputs/InputConfigData.h"
 
 APaper_Character_3D_Movement::APaper_Character_3D_Movement()
@@ -61,7 +62,7 @@ void APaper_Character_3D_Movement::MovePlayer(const FInputActionValue& Val)
 	{
 		if (GetCharacterMovement()->IsCrouching() == false)
 		{
-			if (bAttacking == false && GetHealth() > 0 && bHurt == false)
+			if (bAttacking == false && GetHealth() > 0 && bHurt == false && GetWeaponSpawn()->GetBeamActive() == false)
 			{
 				AddMovementInput(GetCamera()->GetForwardVector(), InputAxis.Y);
 				AddMovementInput(GetCamera()->GetRightVector(), InputAxis.X);

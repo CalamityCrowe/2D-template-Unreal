@@ -7,6 +7,8 @@
 #include "WeaponAttachment.generated.h"
 
 
+class UNiagaraSystem;
+class AScorch_Actor;
 class UNiagaraComponent;
 class ABasePlayer;
 class ABaseProjectile;
@@ -50,6 +52,10 @@ public:
 
 	virtual void SetupInput(ABasePlayer* PlayerRef);
 
+	bool GetBeamActive() const { return bBeamActive; }
+
+	UNiagaraComponent* GetBeamEffect() const { return BeamEffect; }
+
 private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile", meta = (AllowPrivateAccess = true))
@@ -64,6 +70,13 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Niagara System", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraComponent> BeamEffect;
+
+	UPROPERTY(EditDefaultsOnly,Category= "Niagara System", meta = (AllowPrivateAccess = true))
+	TSubclassOf<AScorch_Actor> ScorchRef;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Niagara System", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraSystem> ImpactReference; 
+
 
 	TObjectPtr<ABasePlayer> PlayerRef;
 

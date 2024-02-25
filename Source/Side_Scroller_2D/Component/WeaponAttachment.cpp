@@ -10,7 +10,9 @@
 #include "Side_Scroller_2D/Player/BasePlayer.h"
 #include "Side_Scroller_2D/Projectiles/BaseProjectile.h"
 #include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
+#include "Side_Scroller_2D/Visuals/Scorch_Actor.h"
 
 // Sets default values for this component's properties
 UWeaponAttachment::UWeaponAttachment()
@@ -22,7 +24,6 @@ UWeaponAttachment::UWeaponAttachment()
 	CurrentMagic = EMagicType::Laser; // sets the default value to missile
 
 	BeamEffect = CreateOptionalDefaultSubobject<UNiagaraComponent>("Beam Effect"); // creates the beam effect component
-	BeamEffect->SetupAttachment(this); // sets the beam effect to be attached to this component
 
 	bBeamActive = false; // sets the beam to be inactive by default
 	RelativeBeamYaw = 0.0f; // sets the relative yaw to 0.0f
@@ -114,8 +115,10 @@ void UWeaponAttachment::FireBeam()
 
 bool UWeaponAttachment::LineTraceMethod(FVector StartPos, FVector EndPos, FHitResult& HitResult)
 {
-
-	return GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECollisionChannel::ECC_Visibility, FCollisionQueryParams(), FCollisionResponseParams());
+	FCollisionQueryParams Query;
+	Query.AddIgnoredActor(PlayerRef); // this ignores the player
+	FCollisionResponseParams Response; 
+	return GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECollisionChannel::ECC_Visibility, Query,Response);
 }
 
 
@@ -130,17 +133,36 @@ void UWeaponAttachment::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		RelativeBeamYaw += DeltaTime * BeamSpeed; // this is the speed at which the beam rotates
 		BeamEffect->SetRelativeRotation(FRotator(0, RelativeBeamYaw, 0)); // this sets the rotation of the beam
 		FVector StartPos = PlayerRef->GetActorLocation() + FVector(0, 0, 30); // this gets the start position of the beam
-		FVector EndPos = PlayerRef->GetActorLocation() + (BeamEffect->GetForwardVector() * 100); // this gets the end position of the beam
+		FVector EndPos = (PlayerRef->GetActorLocation() - FVector(0,0,30)) + (BeamEffect->GetForwardVector() * 100); // this gets the end position of the beam
 		FHitResult HitResult; // this is the hit result of the beam
-		DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, false, 0.5, 0, 0.5);
+	//	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, false, 0.5, 0, 0.5);
+
+		if (BeamEffect->IsActive() == false) { BeamEffect->Activate(true); }
+		FName BeamEnd = TEXT("BeamEnd"); // this is the name of the parameter in the beam effect
+		BeamEffect->SetWorldLocation(StartPos);
+		BeamEffect->SetVectorParameter(BeamEnd, EndPos);
+		BeamEffect->SetVariableLinearColor(TEXT("ParticleColour"), FLinearColor(1, 0, 0, 1));
+
+
 		if (LineTraceMethod(StartPos, EndPos, HitResult)) // this checks if the beam has hit anything
 		{
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+			if(UNiagaraComponent* tempComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),ImpactReference,HitResult.ImpactPoint))
+			{
+				tempComponent->SetVariableLinearColor(TEXT("ParticleColour"), FLinearColor(1, 0, 0, 1));
+			}
+			if(AScorch_Actor* tempScorch = GetWorld()->SpawnActor<AScorch_Actor>(ScorchRef,HitResult.ImpactPoint,FRotator(),SpawnParams))
+			{
+				// do additional setups for the decal
+			}
 			// do something to damage the enemy
 		}
 		if (RelativeBeamYaw > 360.0f)
 		{
 			RelativeBeamYaw = 0.0f;
 			bBeamActive = false;
+			BeamEffect->Deactivate();
 		}
 	}
 	else

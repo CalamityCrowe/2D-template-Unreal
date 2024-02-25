@@ -19,6 +19,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputMappingContext.h"
+#include "NiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Side_Scroller_2D/Component/WeaponAttachment.h"
 
@@ -52,6 +53,8 @@ ABasePlayer::ABasePlayer()
 	AttackCollision->SetupAttachment(RootComponent);
 	WeaponSpawn = CreateOptionalDefaultSubobject<UWeaponAttachment>(TEXT("Weapon Spawn"));
 	WeaponSpawn->SetupAttachment(GetCapsuleComponent());
+
+	WeaponSpawn->GetBeamEffect()->SetupAttachment(WeaponSpawn); 
 
 	Footsteps_Audio = CreateDefaultSubobject<UAudioComponent>(TEXT("Footsteps Audio"));
 
@@ -267,7 +270,7 @@ void ABasePlayer::MovePlayer(const FInputActionValue& Val)
 	const FVector2D InputAxis = Val.Get<FVector2D>(); // returns the input axis value
 	if (Controller)
 	{
-		if (GetCharacterMovement()->IsCrouching() == false)
+		if (GetCharacterMovement()->IsCrouching() == false && WeaponSpawn->GetBeamActive() == false)
 		{
 			if (bAttacking == false && Health > 0 && bHurt == false)
 			{

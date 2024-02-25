@@ -139,7 +139,7 @@ protected:
 	bool PlayDeath = true;
 
 
-
+	UWeaponAttachment* GetWeaponSpawn() const { return WeaponSpawn; }
 
 public:
 
