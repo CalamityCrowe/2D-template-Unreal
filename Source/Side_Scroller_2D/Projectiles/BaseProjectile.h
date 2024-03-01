@@ -6,6 +6,12 @@
 #include "GameFramework/Actor.h"
 #include "BaseProjectile.generated.h"
 
+class UPaperFlipbookComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
+class USphereComponent;
+class UProjectileMovementComponent;
+
 UCLASS()
 class SIDE_SCROLLER_2D_API ABaseProjectile : public AActor
 {
@@ -27,13 +33,20 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile Movement")
-	class UProjectileMovementComponent* m_ProjectileMovement;
+private:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile Movement", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UProjectileMovementComponent> m_ProjectileMovement;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile Sprite")
-	class UPaperFlipbookComponent* m_ProjectileSprite;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Projectile Collision")
-	class USphereComponent* m_Collision;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile Sprite", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UPaperFlipbookComponent> m_ProjectileSprite;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectile Collision", meta = (AllowPrivateAccess = true))
+	TObjectPtr<USphereComponent> m_Collision;
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Particles", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraComponent> TrailEffect;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Particles", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraSystem> ImpactReference;
+
 
 };

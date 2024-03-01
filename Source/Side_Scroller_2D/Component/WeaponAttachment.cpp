@@ -78,6 +78,9 @@ void UWeaponAttachment::SpawnProjectile()
 			const FVector SpawnLocation = GetComponentLocation();
 			const FRotator SpawnRotation = GetComponentRotation();
 			const FActorSpawnParameters SpawnParams;
+			if(UNiagaraComponent* tempComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), MissleSpawnParticle,SpawnLocation,SpawnRotation))
+			{
+			}
 			if (ABaseProjectile* TempProjectile = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileRef, SpawnLocation, SpawnRotation, SpawnParams))
 			{
 				PlayerRef->ReduceMana(ProjectileCosts[0]); // this needs changed so it uses the projectile cost

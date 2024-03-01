@@ -16,7 +16,8 @@ public class Side_Scroller_2D : ModuleRules
             "InputCore",
             "Paper2D",
             "EnhancedInput",
-            "Niagara"
+            "Niagara",
+            "UMG"
 
         });
 

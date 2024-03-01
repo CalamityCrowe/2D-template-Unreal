@@ -2,6 +2,9 @@
 
 
 #include "BaseProjectile.h"
+
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/SphereComponent.h"
@@ -25,6 +28,8 @@ ABaseProjectile::ABaseProjectile()
 	m_ProjectileSprite = CreateOptionalDefaultSubobject<UPaperFlipbookComponent>(TEXT("Sprite"));
 	m_ProjectileSprite->SetupAttachment(RootComponent);
 
+	TrailEffect = CreateOptionalDefaultSubobject<UNiagaraComponent>(TEXT("Trail"));
+	TrailEffect->SetupAttachment(RootComponent);
 
 }
 
@@ -34,20 +39,24 @@ void ABaseProjectile::BeginPlay()
 	Super::BeginPlay();
 
 	m_Collision->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::OnOverlapBegin);
-	m_Collision->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnHit); 
+	m_Collision->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnHit);
 
 }
 
 void ABaseProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
-	Destroy(); 
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactReference, Hit.ImpactPoint);
+	Destroy();
 }
 
 void ABaseProjectile::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (OtherActor)
 	{
+
+
+
 		Destroy(); // destroys the actor 
 	}
 }

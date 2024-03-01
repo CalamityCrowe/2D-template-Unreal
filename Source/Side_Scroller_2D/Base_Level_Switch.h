@@ -7,6 +7,7 @@
 #include "Base_Level_Switch.generated.h"
 
 
+class UWidgetComponent;
 class UBoxComponent;
 class ABasePlayer;
 class ABaseLevelTemplate;
@@ -30,6 +31,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void SetupInputs(ABasePlayer* Player);
+
+
 private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level Reference", meta = (AllowPrivateAccess = true))
@@ -41,7 +45,25 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Level Reference", meta = (AllowPrivateAccess = true))
 	TObjectPtr<ABasePlayer> PlayerReference;
 
+	bool bIsOverlapping;
+	bool bIsTransitioning;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UWidgetComponent> ButtonSelect;
+
+
+
 	UFUNCTION()
 	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	UFUNCTION()
+	void OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UFUNCTION()
+	void SwitchLevel();
+
+
+
 };
+

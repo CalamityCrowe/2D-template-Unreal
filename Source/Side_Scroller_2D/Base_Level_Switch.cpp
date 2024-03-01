@@ -3,8 +3,11 @@
 
 #include "Base_Level_Switch.h"
 
+#include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Components/BoxComponent.h"
+#include "Components/WidgetComponent.h"
+#include "Inputs/InputConfigData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/BasePlayer.h"
 
@@ -19,6 +22,14 @@ ABase_Level_Switch::ABase_Level_Switch()
 	Mesh = CreateOptionalDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(Collider);
 
+	ButtonSelect = CreateOptionalDefaultSubobject<UWidgetComponent>(TEXT("Button Select"));
+	ButtonSelect->SetupAttachment(Collider);
+
+
+
+
+
+
 	Collider->OnComponentBeginOverlap.AddDynamic(this, &ABase_Level_Switch::OnOverlapBegin);
 }
 
@@ -29,7 +40,7 @@ void ABase_Level_Switch::BeginPlay()
 
 	if ((PlayerReference = Cast<ABasePlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0))))
 	{
-		
+
 	}
 
 }
@@ -38,8 +49,7 @@ void ABase_Level_Switch::BeginPlay()
 void ABase_Level_Switch::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (IsValid(PlayerReference))
+	if (bIsTransitioning)
 	{
 		if (APlayerController* PC = Cast<APlayerController>(PlayerReference->GetController()))
 		{
@@ -50,25 +60,65 @@ void ABase_Level_Switch::Tick(float DeltaTime)
 		}
 	}
 
+
+}
+
+void ABase_Level_Switch::SetupInputs(ABasePlayer* Player)
+{
+	if (Player)
+	{
+		PlayerReference = Player;
+
+		if (APlayerController* PC = Cast<APlayerController>(Player->GetController()))
+		{
+			if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PC->InputComponent))
+			{
+				PEI->BindAction(Player->GetInputData()->IA_Jump, ETriggerEvent::Started, this, &ABase_Level_Switch::SwitchLevel);
+			}
+		}
+	}
 }
 
 void ABase_Level_Switch::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (IsValid(PlayerReference))
+	if (Cast<ABasePlayer>(OtherActor))
 	{
-		if (APlayerController* PC = Cast<APlayerController>(PlayerReference->GetController()))
-		{
-			if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
-			{
-				if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())  // gets the enhanced input from the local input system
-				{
-					InputSystem->ClearAllMappings();
-				}
-			}
-			PC->PlayerCameraManager->StartCameraFade(0, 1, 3, FColor::Black, true, true);
+		ButtonSelect->SetVisibility(true);
+		bIsOverlapping = true;
+	}
+}
 
+void ABase_Level_Switch::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (Cast<ABasePlayer>(OtherActor))
+	{
+		ButtonSelect->SetVisibility(false);
+		bIsOverlapping = false;
+	}
+}
+
+void ABase_Level_Switch::SwitchLevel()
+{
+	if (bIsOverlapping)
+	{
+		if (IsValid(PlayerReference))
+		{
+			if (APlayerController* PC = Cast<APlayerController>(PlayerReference->GetController()))
+			{
+				if (ULocalPlayer* LocalPlayer = PC->GetLocalPlayer())
+				{
+					if (UEnhancedInputLocalPlayerSubsystem* InputSystem = LocalPlayer->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>())  // gets the enhanced input from the local input system
+					{
+						InputSystem->ClearAllMappings();
+					}
+				}
+				PC->PlayerCameraManager->StartCameraFade(0, 1, 3, FColor::Black, true, true);
+				bIsTransitioning = true;
+			}
 		}
+
 	}
 }
 

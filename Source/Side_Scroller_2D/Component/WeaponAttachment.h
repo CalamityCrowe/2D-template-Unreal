@@ -78,6 +78,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Niagara System", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraSystem> ImpactReference; 
 
+	UPROPERTY(EditDefaultsOnly, Category = "Niagara System", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UNiagaraSystem> MissleSpawnParticle; 
+	
+
 
 	TObjectPtr<ABasePlayer> PlayerRef;
 
