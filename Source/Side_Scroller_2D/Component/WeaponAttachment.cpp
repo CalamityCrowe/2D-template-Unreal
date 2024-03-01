@@ -133,7 +133,7 @@ void UWeaponAttachment::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		RelativeBeamYaw += DeltaTime * BeamSpeed; // this is the speed at which the beam rotates
 		BeamEffect->SetRelativeRotation(FRotator(0, RelativeBeamYaw, 0)); // this sets the rotation of the beam
 		FVector StartPos = PlayerRef->GetActorLocation() + FVector(0, 0, 30); // this gets the start position of the beam
-		FVector EndPos = (PlayerRef->GetActorLocation() - FVector(0,0,100)) + (BeamEffect->GetForwardVector() * 200); // this gets the end position of the beam
+		FVector EndPos = (PlayerRef->GetActorLocation() - FVector(0,0,30)) + (BeamEffect->GetForwardVector() * 100); // this gets the end position of the beam
 		FHitResult HitResult; // this is the hit result of the beam
 	//	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, false, 0.5, 0, 0.5);
 
