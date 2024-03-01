@@ -19,6 +19,7 @@ enum EMagicType
 {
 	Missile UMETA(DisplayName = "Missile"),
 	Laser UMETA(DisplayName = "Laser"),
+	ChaosSpawn UMETA(DisplayName = "Chaos")
 
 };
 
