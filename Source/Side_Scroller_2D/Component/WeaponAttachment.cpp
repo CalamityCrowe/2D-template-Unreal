@@ -2,7 +2,6 @@
 
 
 #include "WeaponAttachment.h"
-#include "WeaponAttachment.h"
 
 #include "EnhancedInputComponent.h"
 #include "Components/ArrowComponent.h"
@@ -63,6 +62,8 @@ void UWeaponAttachment::SetupInput(ABasePlayer* PR)
 		if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PC->InputComponent))
 		{
 			PEI->BindAction(PR->GetInputData()->IA_FireProjectile, ETriggerEvent::Started, this, &UWeaponAttachment::CastMagic);
+			PEI->BindAction(PR->GetInputData()->IA_NextSelect, ETriggerEvent::Started, this, &UWeaponAttachment::NextSpell);
+			PEI->BindAction(PR->GetInputData()->IA_PreviousSelect, ETriggerEvent::Started, this, &UWeaponAttachment::PreviousSpell);
 		}
 	}
 
@@ -73,20 +74,19 @@ void UWeaponAttachment::SpawnProjectile()
 {
 	if (ProjectileRef)
 	{
-		if (PlayerRef->GetMana())
-		{
-			const FVector SpawnLocation = GetComponentLocation();
-			const FRotator SpawnRotation = GetComponentRotation();
-			const FActorSpawnParameters SpawnParams;
-			if(UNiagaraComponent* tempComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), MissleSpawnParticle,SpawnLocation,SpawnRotation))
-			{
-			}
-			if (ABaseProjectile* TempProjectile = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileRef, SpawnLocation, SpawnRotation, SpawnParams))
-			{
-				PlayerRef->ReduceMana(ProjectileCosts[0]); // this needs changed so it uses the projectile cost
-			}
 
+		const FVector SpawnLocation = GetComponentLocation();
+		const FRotator SpawnRotation = GetComponentRotation();
+		const FActorSpawnParameters SpawnParams;
+		if (UNiagaraComponent* tempComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), MissleSpawnParticle, SpawnLocation, SpawnRotation))
+		{
 		}
+		if (ABaseProjectile* TempProjectile = GetWorld()->SpawnActor<ABaseProjectile>(ProjectileRef, SpawnLocation, SpawnRotation, SpawnParams))
+		{
+			PlayerRef->ReduceMana(ProjectileCosts[0]); // this needs changed so it uses the projectile cost
+		}
+
+
 	}
 }
 
@@ -95,11 +95,16 @@ void UWeaponAttachment::CastMagic()
 	switch (CurrentMagic)
 	{
 	case EMagicType::Missile:
-		SpawnProjectile(); // this spawns the magic projectile
+		if (PlayerRef->GetMana() >= ProjectileCosts[0])
+		{
+			SpawnProjectile(); // this spawns the magic projectile
+		}
 		break;
 	case EMagicType::Laser:
-		FireBeam(); // this fires the magic beam
-		break;
+		if (PlayerRef->GetMana() >= ProjectileCosts[1])
+		{
+			FireBeam(); // this fires the magic beam
+		}break;
 	default:
 		break;
 	}
@@ -107,6 +112,7 @@ void UWeaponAttachment::CastMagic()
 
 void UWeaponAttachment::FireBeam()
 {
+
 	if (BeamEffect && bBeamActive == false)
 	{
 		bBeamActive = true; // this sets the beam to be active
@@ -116,12 +122,30 @@ void UWeaponAttachment::FireBeam()
 
 }
 
+void UWeaponAttachment::NextSpell()
+{
+	CurrentMagic = static_cast<EMagicType>(static_cast<int>(CurrentMagic) + 1);
+	if (CurrentMagic == EMagicType::End)
+	{
+		CurrentMagic = static_cast<EMagicType>(static_cast<int>(EMagicType::None) + 1);
+	}
+}
+
+void UWeaponAttachment::PreviousSpell()
+{
+	CurrentMagic = static_cast<EMagicType>(static_cast<int>(CurrentMagic) - 1);
+	if (CurrentMagic == EMagicType::None)
+	{
+		CurrentMagic = static_cast<EMagicType>(static_cast<int>(EMagicType::End) - 1);
+	}
+}
+
 bool UWeaponAttachment::LineTraceMethod(FVector StartPos, FVector EndPos, FHitResult& HitResult)
 {
 	FCollisionQueryParams Query;
 	Query.AddIgnoredActor(PlayerRef); // this ignores the player
-	FCollisionResponseParams Response; 
-	return GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECollisionChannel::ECC_Visibility, Query,Response);
+	FCollisionResponseParams Response;
+	return GetWorld()->LineTraceSingleByChannel(HitResult, StartPos, EndPos, ECollisionChannel::ECC_Visibility, Query, Response);
 }
 
 
@@ -136,9 +160,9 @@ void UWeaponAttachment::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		RelativeBeamYaw += DeltaTime * BeamSpeed; // this is the speed at which the beam rotates
 		BeamEffect->SetRelativeRotation(FRotator(0, RelativeBeamYaw, 0)); // this sets the rotation of the beam
 		FVector StartPos = PlayerRef->GetActorLocation() + FVector(0, 0, 30); // this gets the start position of the beam
-		FVector EndPos = (PlayerRef->GetActorLocation() - FVector(0,0,100)) + (BeamEffect->GetForwardVector() * 200); // this gets the end position of the beam
+		FVector EndPos = (PlayerRef->GetActorLocation() - FVector(0, 0, 100)) + (BeamEffect->GetForwardVector() * 200); // this gets the end position of the beam
 		FHitResult HitResult; // this is the hit result of the beam
-	//	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, false, 0.5, 0, 0.5);
+		//	DrawDebugLine(GetWorld(), StartPos, EndPos, FColor::Green, false, 0.5, 0, 0.5);
 
 		if (BeamEffect->IsActive() == false) { BeamEffect->Activate(true); }
 		FName BeamEnd = TEXT("BeamEnd"); // this is the name of the parameter in the beam effect
@@ -151,11 +175,11 @@ void UWeaponAttachment::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		{
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-			if(UNiagaraComponent* tempComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),ImpactReference,HitResult.ImpactPoint))
+			if (UNiagaraComponent* tempComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ImpactReference, HitResult.ImpactPoint))
 			{
 				tempComponent->SetVariableLinearColor(TEXT("ParticleColour"), FLinearColor(1, 0, 0, 1));
 			}
-			if(AScorch_Actor* tempScorch = GetWorld()->SpawnActor<AScorch_Actor>(ScorchRef,HitResult.ImpactPoint,FRotator(),SpawnParams))
+			if (AScorch_Actor* tempScorch = GetWorld()->SpawnActor<AScorch_Actor>(ScorchRef, HitResult.ImpactPoint, FRotator(), SpawnParams))
 			{
 				// do additional setups for the decal
 			}

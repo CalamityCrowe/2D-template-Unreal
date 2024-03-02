@@ -101,8 +101,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Attack Collision", meta = (AllowPrivateAccess = true))
 	TObjectPtr<USphereComponent> AttackCollision;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Projectiles", meta = (AllowPrivateAccess = true))
-	TObjectPtr<UWeaponAttachment> WeaponSpawn; 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Projectiles", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UWeaponAttachment> WeaponSpawn;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Camera", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UCameraComponent> Camera;
@@ -159,7 +159,9 @@ public:
 	}
 
 	float GetHealth()const { return Health; }
-	float GetMana()const { return Mana;  }
+	float GetMana()const { return Mana; }
+	float GetMaxHealth()const { return MaxHealth; }
+	float GetMaxMana()const { return MaxMana; }
 
 	void IncreaseMaxHealth(float MH = 0) { MaxHealth += MH; newHealth += MH / 2; }
 	void IncreaseMaxMana(float MM = 0) { MaxMana += MM; newMana += MM / 2; }
@@ -176,7 +178,7 @@ public:
 
 	TEnumAsByte<EAttackStates> GetCurrentAttack() const { return CurrentAttack; }
 
-	UCameraComponent* GetCamera() const { return Camera;  }
+	UCameraComponent* GetCamera() const { return Camera; }
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

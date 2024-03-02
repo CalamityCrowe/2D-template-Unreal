@@ -8,13 +8,13 @@
 #include "InputConfigData.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class SIDE_SCROLLER_2D_API UInputConfigData : public UDataAsset
 {
 	GENERATED_BODY()
-public: 
+public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>IA_Movement;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
@@ -25,4 +25,8 @@ public:
 	TObjectPtr<UInputAction>IA_Jump;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>IA_Crouch;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction>IA_PreviousSelect;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction>IA_NextSelect;
 };

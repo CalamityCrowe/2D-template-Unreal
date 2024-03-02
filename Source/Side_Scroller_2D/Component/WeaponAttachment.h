@@ -15,11 +15,16 @@ class ABaseProjectile;
 class UArrowComponent;
 
 UENUM(BlueprintType)
-enum EMagicType
+enum class EMagicType : uint8
 {
+	None UMETA(DisplayName = "None"),
 	Missile UMETA(DisplayName = "Missile"),
 	Laser UMETA(DisplayName = "Laser"),
-	ChaosSpawn UMETA(DisplayName = "Chaos")
+	//ChaosSpawn UMETA(DisplayName = "Chaos")
+
+
+	End UMETA(DisplayName = "End"),
+	
 
 };
 
@@ -43,6 +48,11 @@ protected:
 	virtual void CastMagic();
 
 	virtual void FireBeam();
+
+private:
+	void NextSpell();
+	void PreviousSpell();
+
 private:
 	bool LineTraceMethod(FVector StartPos, FVector EndPos, FHitResult&);
 
@@ -66,8 +76,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Projectile", meta = (AllowPrivateAccess = true))
 	TArray<float> ProjectileCosts;
 
-	UPROPERTY(EditDefaultsOnly, Category = "Magic Type", meta = (AllowPrivateAccess = true));
-	TEnumAsByte<EMagicType> CurrentMagic;
+	UPROPERTY(EditDefaultsOnly,BlueprintReadOnly, Category = "Magic Type", meta = (AllowPrivateAccess = true));
+	EMagicType CurrentMagic;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Niagara System", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraComponent> BeamEffect;
