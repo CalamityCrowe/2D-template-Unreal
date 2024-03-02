@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Side_Scroller_2D/Component/WeaponAttachment.h"
 #include "Side_Scroller_2D/Inputs/InputConfigData.h"
+#include <Side_Scroller_2D/Base_Level_Switch.h>
 
 APaper_Character_3D_Movement::APaper_Character_3D_Movement()
 {
@@ -52,6 +53,11 @@ void APaper_Character_3D_Movement::SetupPlayerInputComponent(UInputComponent* Pl
 
 		}
 
+	}
+	for (TObjectIterator<ABase_Level_Switch> LevelSwitch; LevelSwitch; ++LevelSwitch)
+	{
+		LevelSwitch->SetupInputs(this);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Level Switch Found"));
 	}
 }
 

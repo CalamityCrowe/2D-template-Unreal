@@ -22,6 +22,7 @@
 #include "NiagaraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Side_Scroller_2D/Component/WeaponAttachment.h"
+#include <Side_Scroller_2D/Base_Level_Switch.h>
 
 
 // Sets default values
@@ -87,6 +88,11 @@ void ABasePlayer::BeginPlay()
 	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
 	{
 		PC->PlayerCameraManager->StartCameraFade(1, 0, 5, FColor::Black, true, false);
+	}
+
+	for (TObjectIterator<ABase_Level_Switch> LevelSwitch; LevelSwitch; ++LevelSwitch)
+	{
+		LevelSwitch->SetupInputs(this);
 	}
 
 }
