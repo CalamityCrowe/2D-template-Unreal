@@ -6,29 +6,32 @@
 #include "AIController.h"
 #include "BaseEnemyController.generated.h"
 
+
+class ABasePlayer;
 /**
- * 
+ *
  */
 UCLASS()
 class SIDE_SCROLLER_2D_API ABaseEnemyController : public AAIController
 {
 	GENERATED_BODY()
 public:
-	ABaseEnemyController(); 
+	ABaseEnemyController();
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void OnPossess(APawn* InPawn) override; 
 
 public:
-	virtual void Tick(float DeltaTime) override; 
-	
-	bool m_Flipmovement; 
+
+	void MoveActor();
+
 
 protected:
 
-	class ABaseEnemy* m_EnemyRef; 
+	TObjectPtr<ABasePlayer> PlayerReference;
 
-	float m_Timer; 
-	float m_Target; 
 
 };

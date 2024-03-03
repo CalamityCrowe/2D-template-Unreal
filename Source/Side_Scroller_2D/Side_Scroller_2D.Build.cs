@@ -17,7 +17,8 @@ public class Side_Scroller_2D : ModuleRules
             "Paper2D",
             "EnhancedInput",
             "Niagara",
-            "UMG"
+            "UMG",
+            "NavigationSystem"
 
         });
 

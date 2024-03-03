@@ -7,6 +7,7 @@
 #include "BaseEnemyController.h"
 #include "Side_Scroller_2D/Player/BasePlayer.h"
 #include "Components/CapsuleComponent.h"
+#include "Side_Scroller_2D/Component/EnemyAnimationComponent.h"
 
 ABaseEnemy::ABaseEnemy()
 {
@@ -14,51 +15,43 @@ ABaseEnemy::ABaseEnemy()
 
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
-	m_Health = 100.f;
+	EnemyAnimationComponent = CreateDefaultSubobject<UEnemyAnimationComponent>(TEXT("EnemyAnimationComponent"));
+	
+	
+
+
 }
 
 void ABaseEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	//m_EnemyController = Cast<ABaseEnemyController>(GetController());
+	if ((EnemyController = Cast<ABaseEnemyController>(GetController())))
+	{
+		GEngine->AddOnScreenDebugMessage(74, 2, FColor::Cyan, TEXT("Enemy Ref Set"));
+	}
+
 	GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &ABaseEnemy::OnOverlapBegin);
 }
 
 void ABaseEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (m_Health > 0)
+	if (Health > 0)
 	{
-		HandleEnemyMovement();
+		if (EnemyController) 
+		{
+			EnemyController->MoveActor();
+		}
 	}
 	else
 	{
-		m_isDead = true;
+		isDead = true;
 	}
-	UpdateAnimation();
 	UpdateRotation();
 
 }
 
-void ABaseEnemy::UpdateAnimation()
-{
-	const FVector EnemyVelocity = GetVelocity();
-	const float EnemySpeedSqr = EnemyVelocity.SizeSquared(); // gets the length of the velocity squared
-
-	UPaperFlipbook* DesiredAnimation = (EnemySpeedSqr > 0.0f) ? m_RunAnimation : m_IdleAnimation;
-	DesiredAnimation = (m_Health <= 0.f) ? m_DeathAnimation : DesiredAnimation;
-
-
-	if (m_isDead)
-	{
-		GetSprite()->SetLooping(false);
-	}
-	if (GetSprite()->GetFlipbook() != DesiredAnimation)
-	{
-		GetSprite()->SetFlipbook(DesiredAnimation);
-	}
-
-}
 
 void ABaseEnemy::UpdateRotation()
 {
@@ -85,21 +78,14 @@ void ABaseEnemy::HandleEnemyMovement()
 	{
 		if (ABaseEnemyController* temp = Cast<ABaseEnemyController>(GetController())) // then checks it can be cast to the enemycontroller sub type
 		{
-			if (temp->m_Flipmovement == true) // checks if the movement should be flipped
-			{
-				AddMovementInput(FVector(1, 0, 0), 1);
-			}
-			else
-			{
-				AddMovementInput(FVector(1, 0, 0), -1);
-			}
+			
 		}
 	}
 }
 
 void ABaseEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor != this && IsValid(OtherActor) && m_isDead == false) // checks if the other actor is not itself and is valid, along with checking if itself is dead
+	if (OtherActor != this && IsValid(OtherActor) && isDead == false) // checks if the other actor is not itself and is valid, along with checking if itself is dead
 	{
 		if (ABasePlayer* tempPlayer = Cast<ABasePlayer>(OtherActor))
 		{
@@ -107,7 +93,6 @@ void ABaseEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 			{
 				tempPlayer->PlayerHurt(); // calls the function to hurt the player
 				float X_Force = (tempPlayer->GetActorLocation().X - GetActorLocation().X > 0) ? 1 : -1; // checks which direction it should launch the player
-				//GEngine->AddOnScreenDebugMessage(-10, 1.f, FColor::Yellow, FString::Printf(TEXT("Impact X: %f"), SweepResult.ImpactNormal.X));
 
 
 				FVector dir = FVector((X_Force) * 250, 0, 200);
@@ -115,7 +100,6 @@ void ABaseEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* Oth
 				tempPlayer->LaunchCharacter(dir, false, false);
 
 				tempPlayer->PlayHitSound(); 
-				//tempPlayer->GetCharacterMovement()->Velocity = FVector();			
 			}
 
 		}

@@ -2,19 +2,22 @@
 
 
 #include "BaseEnemyController.h"
+#include <Kismet/GameplayStatics.h>
+#include <NavigationSystem.h>
+#include "BaseEnemy.h"
+#include "Side_Scroller_2D/Player/BasePlayer.h"
 
 ABaseEnemyController::ABaseEnemyController()
 {
 	PrimaryActorTick.bCanEverTick = true;
+		
 
-	m_Flipmovement = false; 
-	m_Target = 1.f; 
 }
 
 void ABaseEnemyController::BeginPlay()
 {
 	Super::BeginPlay(); 
-	
+	PlayerReference = Cast<ABasePlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
 	
 }
@@ -23,12 +26,26 @@ void ABaseEnemyController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime); 
 	
-	m_Timer += DeltaTime;
-	if (m_Timer >= m_Target) 
+	
+}
+
+void ABaseEnemyController::OnPossess(APawn* InPawn)
+{
+	Super::OnPossess(InPawn);
+}
+
+void ABaseEnemyController::MoveActor()
+{
+	UNavigationSystemV1* NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (APawn* ControlledPawn = GetPawn())
 	{
-		m_Timer = 0;
-		m_Flipmovement = !m_Flipmovement; 
+		const ANavigationData* NavData = NavSys->GetDefaultNavDataInstance(FNavigationSystem::DontCreate);
+
+		if (ABaseEnemy* CurrentEnemy = Cast<ABaseEnemy>(ControlledPawn))
+		{
+			MoveToLocation(PlayerReference->GetActorLocation(), 10);
+		}
+
 	}
-
-
 }

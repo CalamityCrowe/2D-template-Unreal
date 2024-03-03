@@ -165,8 +165,8 @@ public:
 
 	void IncreaseMaxHealth(float MH = 0) { MaxHealth += MH; newHealth += MH / 2; }
 	void IncreaseMaxMana(float MM = 0) { MaxMana += MM; newMana += MM / 2; }
-	void RecoverHealth(float H = 0) { newHealth += H; }
-	void RecoverMana(float M = 0) { newMana += M; }
+	void RecoverHealth(float H = 0) { newHealth += H; if (newHealth > MaxHealth) { newHealth = MaxHealth; } }
+	void RecoverMana(float M = 0) { newMana += M; if (newMana > MaxMana) { newMana = MaxMana;  } }
 	void ReduceMana(float M) { newMana -= M; }
 
 

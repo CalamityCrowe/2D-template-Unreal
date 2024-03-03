@@ -14,6 +14,9 @@
  * this also contains functions that can handle the updating of animations and rotating the enemy based on their movement direction
  */
 
+class UEnemyAnimationComponent; 
+class ABaseEnemyController;
+
 UENUM(BlueprintType)
 enum class EnemyState :uint8
 {
@@ -42,30 +45,24 @@ protected:
 		void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
-public:
+protected:
 	virtual void Tick(float DeltaTime) override;
-	void UpdateAnimation();
 	void UpdateRotation();
 
 protected:
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
-		class UPaperFlipbook* m_IdleAnimation;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
-		class  UPaperFlipbook* m_RunAnimation;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
-		class UPaperFlipbook* m_HitAnimation;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
-		class UPaperFlipbook* m_DeathAnimation;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Enemy Sprite")
-		class UPaperFlipbook* m_AttackAnimation;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-		float m_Health;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats")
-		bool m_isDead;
+	UPROPERTY(EditDefaultsOnly,Category = "Animations", meta =(AllowPrivateAccess = true))
+	TObjectPtr<UEnemyAnimationComponent> EnemyAnimationComponent;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
+		float Health;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
+		bool isDead;
 
 
-	class ABaseEnemyController* m_EnemyController;
+
+
+	TObjectPtr<ABaseEnemyController> EnemyController;
 
 };

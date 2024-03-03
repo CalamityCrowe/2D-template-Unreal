@@ -22,30 +22,6 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-private:
-	UPROPERTY(Category = "Collider", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		TObjectPtr<class UBoxComponent> m_Collision;
-	UPROPERTY(Category = "Audio", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		TObjectPtr<class UAudioComponent> m_Audio;
-	UPROPERTY(Category = "Sprite", VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-		TObjectPtr<class UPaperFlipbookComponent> m_Sprite;
-
-protected:
-
-	UPROPERTY(Category = "Damage", VisibleAnywhere, BlueprintReadWrite)
-		int m_Damage;
-
-
-public:
-
-	FORCEINLINE UBoxComponent* GetCollider() const { return m_Collision; }
-	FORCEINLINE UAudioComponent* GetAudio() const { return m_Audio; }
-	FORCEINLINE UPaperFlipbookComponent* GetSprite() const { return m_Sprite; }
-
-	UFUNCTION()
-		virtual void ColliderOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	UFUNCTION()
-		virtual void ColliderEndOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 
 };
