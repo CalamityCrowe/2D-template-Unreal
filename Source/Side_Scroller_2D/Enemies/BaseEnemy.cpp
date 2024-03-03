@@ -8,6 +8,7 @@
 #include "Side_Scroller_2D/Player/BasePlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "Side_Scroller_2D/Component/EnemyAnimationComponent.h"
+#include "Perception/PawnSensingComponent.h"
 
 ABaseEnemy::ABaseEnemy()
 {
@@ -16,10 +17,11 @@ ABaseEnemy::ABaseEnemy()
 	GetCharacterMovement()->bUseFlatBaseForFloorChecks = true;
 
 	EnemyAnimationComponent = CreateDefaultSubobject<UEnemyAnimationComponent>(TEXT("EnemyAnimationComponent"));
-	
-	
+	PawnSensingComponent = CreateDefaultSubobject<UPawnSensingComponent>(TEXT("PawnSensingComponent"));
 
-
+	PawnSensingComponent->OnSeePawn.AddDynamic(this, &ABaseEnemy::OnSeePawn);
+	bCanSeePlayer = false;	
+	CurrentState = EEnemyState::Idle;
 }
 
 void ABaseEnemy::BeginPlay()
@@ -37,11 +39,15 @@ void ABaseEnemy::BeginPlay()
 void ABaseEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	if (Health > 0)
+	if (CurrentState  == EEnemyState::Walk)
 	{
 		if (EnemyController) 
 		{
 			EnemyController->MoveActor();
+		}
+		if (bCanSeePlayer) 
+		{
+			if()
 		}
 	}
 	else
@@ -71,17 +77,15 @@ void ABaseEnemy::UpdateRotation()
 
 }
 
-void ABaseEnemy::HandleEnemyMovement()
+void ABaseEnemy::OnSeePawn(APawn* Pawn)
 {
-
-	if (IsValid(GetController())) // checks if there is a valid controller assigned to the enemy
+	if (ABasePlayer* tempPlayer = Cast<ABasePlayer>(Pawn))
 	{
-		if (ABaseEnemyController* temp = Cast<ABaseEnemyController>(GetController())) // then checks it can be cast to the enemycontroller sub type
-		{
-			
-		}
+		CurrentState = EEnemyState::Walk;
+		bCanSeePlayer = true;
 	}
 }
+
 
 void ABaseEnemy::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {

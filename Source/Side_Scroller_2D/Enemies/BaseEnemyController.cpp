@@ -10,23 +10,23 @@
 ABaseEnemyController::ABaseEnemyController()
 {
 	PrimaryActorTick.bCanEverTick = true;
-		
+
 
 }
 
 void ABaseEnemyController::BeginPlay()
 {
-	Super::BeginPlay(); 
+	Super::BeginPlay();
 	PlayerReference = Cast<ABasePlayer>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 
-	
+
 }
 
 void ABaseEnemyController::Tick(float DeltaTime)
 {
-	Super::Tick(DeltaTime); 
-	
-	
+	Super::Tick(DeltaTime);
+
+
 }
 
 void ABaseEnemyController::OnPossess(APawn* InPawn)
@@ -45,7 +45,16 @@ void ABaseEnemyController::MoveActor()
 		if (ABaseEnemy* CurrentEnemy = Cast<ABaseEnemy>(ControlledPawn))
 		{
 			MoveToLocation(PlayerReference->GetActorLocation(), 10);
+
 		}
 
+	}
+}
+
+void ABaseEnemyController::StopActor()
+{
+	if (GetPawn()->GetVelocity().SquaredLength() > 0)
+	{
+		StopMovement();
 	}
 }

@@ -14,11 +14,12 @@
  * this also contains functions that can handle the updating of animations and rotating the enemy based on their movement direction
  */
 
-class UEnemyAnimationComponent; 
+class UEnemyAnimationComponent;
 class ABaseEnemyController;
+class UPawnSensingComponent; 
 
 UENUM(BlueprintType)
-enum class EnemyState :uint8
+enum class EEnemyState :uint8
 {
 	Idle UMETA(DisplayName = "Idle"),
 	Hurt UMETA(DisplayName = "Hurt"),
@@ -39,29 +40,38 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void HandleEnemyMovement();
 
 	UFUNCTION()
-		void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 
-protected:
+private :
 	virtual void Tick(float DeltaTime) override;
 	void UpdateRotation();
 
-protected:
+	UFUNCTION()
+	void OnSeePawn(APawn* Pawn);
 
-
-	UPROPERTY(EditDefaultsOnly,Category = "Animations", meta =(AllowPrivateAccess = true))
+private:
+	UPROPERTY(EditDefaultsOnly, Category = "Animations", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UEnemyAnimationComponent> EnemyAnimationComponent;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
-		float Health;
+	float Health;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Stats", meta = (AllowPrivateAccess = true))
-		bool isDead;
+	bool isDead;
+
+	EEnemyState CurrentState;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "AI", meta = (AllowPrivateAccess = true))
+	TObjectPtr<UPawnSensingComponent> PawnSensingComponent;
+
+	bool bCanSeePlayer; 
 
 
+public:
 
+	EEnemyState GetCurrentState() const { return CurrentState; }
 
 	TObjectPtr<ABaseEnemyController> EnemyController;
 

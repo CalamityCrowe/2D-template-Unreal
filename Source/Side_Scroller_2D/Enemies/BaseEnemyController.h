@@ -27,7 +27,7 @@ protected:
 public:
 
 	void MoveActor();
-
+	void StopActor(); 
 
 protected:
 
