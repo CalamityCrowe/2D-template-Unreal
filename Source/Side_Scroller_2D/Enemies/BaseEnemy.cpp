@@ -47,7 +47,7 @@ void ABaseEnemy::Tick(float DeltaTime)
 		}
 		if (bCanSeePlayer) 
 		{
-			if()
+			
 		}
 	}
 	else
