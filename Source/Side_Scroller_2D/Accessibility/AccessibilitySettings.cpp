@@ -4,3 +4,6 @@
 #include "AccessibilitySettings.h"
 
 
+UAccessibilitySettings::UAccessibilitySettings()
+{
+}
