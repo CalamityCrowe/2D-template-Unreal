@@ -6,4 +6,6 @@
 
 UAccessibilitySettings::UAccessibilitySettings()
 {
+	VisualSettings.TextSettings.BackgroundColour = FColor::Transparent; // Default to transparent
+	VisualSettings.TextSettings.TextColour = FColor::White; // Default to white
 }

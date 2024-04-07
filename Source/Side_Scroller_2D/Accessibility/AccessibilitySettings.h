@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Rendering/RenderingCommon.h"
+#include "Styling/SlateColor.h"
 #include "AccessibilitySettings.generated.h"
 
 
@@ -40,12 +41,12 @@ struct SIDE_SCROLLER_2D_API FTextSettingHandler
 {
 	GENERATED_BODY();
 public:
-	UPROPERTY(BlueprintReadWrite,EditAnywhere, Category = "Text settings", meta = (AllowPrivateAccess = true))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Text settings", meta = (AllowPrivateAccess = true))
 	ETextSize TextSize = ETextSize::TS_Medium;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Text Colour", meta = (AllowPrivateAccess = true))
-	FColor TextColour = FColor::White;
+	FSlateColor TextColour;
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, Category = "Text Colour", meta = (AllowPrivateAccess = true))
-	FColor BackgroundColour = FColor::Black;
+	FSlateColor BackgroundColour;
 
 };
 
