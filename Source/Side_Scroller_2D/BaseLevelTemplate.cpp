@@ -25,7 +25,7 @@ void ABaseLevelTemplate::BeginPlay()
 	{
 		m_ViewportSize = UGameUserSettings::GetGameUserSettings()->GetScreenResolution();
 	}
-	FadeLevelIn(); 
+	FadeLevelIn();
 }
 
 void ABaseLevelTemplate::Tick(float DeltaTime)
@@ -46,13 +46,13 @@ void ABaseLevelTemplate::Tick(float DeltaTime)
 			if (m_PlayerRef->GetActorLocation().X <= m_ViewportSize.X / m_TileWidth)
 			{
 				//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, TEXT("Left"));
-				m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->GetSocket().X, ((m_ViewportSize.X / m_TileWidth) - m_PlayerRef->GetActorLocation().X) + m_TileWidth, m_PlayerRef->GetSocket().Z);
+				m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->GetSocket().X, ((m_ViewportSize.X / m_TileWidth) - m_PlayerRef->GetActorLocation().X) + (m_TileWidth * 4), m_PlayerRef->GetSocket().Z);
 				m_PlayerRef->GetSpringArmComponent()->bEnableCameraLag = false;
 			}
 			else if (m_PlayerRef->GetActorLocation().X >= (m_MapWidth * m_TileWidth) - (m_ViewportSize.X / m_TileWidth))
 			{
 				//GEngine->AddOnScreenDebugMessage(-1, .01f, FColor::Red, TEXT("Right"));
-				m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->GetSocket().X, (m_MapWidth * m_TileWidth) - (m_ViewportSize.X / m_TileWidth) - m_PlayerRef->GetActorLocation().X, m_PlayerRef->GetSocket().Z);
+				m_PlayerRef->GetSpringArmComponent()->SocketOffset = FVector(m_PlayerRef->GetSocket().X, ((m_MapWidth * m_TileWidth) - (m_ViewportSize.X / m_TileWidth) - m_PlayerRef->GetActorLocation().X) - (m_TileWidth * 4), m_PlayerRef->GetSocket().Z);
 				m_PlayerRef->GetSpringArmComponent()->bEnableCameraLag = false;
 			}
 			else
