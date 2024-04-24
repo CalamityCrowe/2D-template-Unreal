@@ -10,6 +10,8 @@
 #include "Inputs/InputConfigData.h"
 #include "Kismet/GameplayStatics.h"
 #include "Player/BasePlayer.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 
 // Sets default values
 ABase_Level_Switch::ABase_Level_Switch()
@@ -27,10 +29,8 @@ ABase_Level_Switch::ABase_Level_Switch()
 
 #if PLATFORM_WINDOWS
 	CurrentPlatform = ECurrentPlatform::Windows;
-#elif PLATFORM_PS5
-	CurrentPlatform = ECurrentPlatform::PS5;
 #else
-	CurrentPlatform = ECurrentPlatform::None;
+	CurrentPlatform = ECurrentPlatform::PS5;
 #endif
 	bIsOverlapping = false;
 	Collider->OnComponentBeginOverlap.AddDynamic(this, &ABase_Level_Switch::OnOverlapBegin);
@@ -80,32 +80,43 @@ void ABase_Level_Switch::SetupInputs(ABasePlayer* Player)
 	{
 		if (UEnhancedInputComponent* PEI = Cast<UEnhancedInputComponent>(PC->InputComponent))
 		{
-			PEI->BindAction(Player->GetInputData()->IA_Jump, ETriggerEvent::Started, this, &ABase_Level_Switch::SwitchLevel);
+			PEI->BindAction(Player->GetInputData()->IA_Interact, ETriggerEvent::Started, this, &ABase_Level_Switch::SwitchLevel);
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Yellow, TEXT("Level Switch Found"));
 			PlayerReference = Player;
 		}
+		else
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Enhanced Input Component Invalid"));
+		}
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PlayerController Invalid"));
 	}
 }
 
 void ABase_Level_Switch::OnOverlapBegin(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (Cast<ABasePlayer>(OtherActor))
+	if (ABasePlayer* tempPlayer =  Cast<ABasePlayer>(OtherActor))
 	{
 		ButtonSelect->SetVisibility(true);
 		bIsOverlapping = true;
 		bShouldBounce = true;
+		tempPlayer->GetCharacterMovement()->SetJumpAllowed(false);
+
 	}
 }
 
 void ABase_Level_Switch::OnOverlapEnd(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (Cast<ABasePlayer>(OtherActor))
+	if (ABasePlayer* tempPlayer = Cast<ABasePlayer>(OtherActor))
 	{
 		ButtonSelect->SetVisibility(false);
 		bShouldBounce = false;
 		BounceOffset = 0;
+		tempPlayer->GetCharacterMovement()->SetJumpAllowed(true);
 	}
 }
 
@@ -113,6 +124,7 @@ void ABase_Level_Switch::SwitchLevel()
 {
 	if (bIsOverlapping == true)
 	{
+GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Purple, TEXT("Level Switch Found"));
 		if (APlayerController* PC = Cast<APlayerController>(PlayerReference->GetController()))
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("PlayerController Valid"));
@@ -125,7 +137,7 @@ void ABase_Level_Switch::SwitchLevel()
 					InputSystem->ClearAllMappings();
 				}
 			}
-			PC->PlayerCameraManager->StartCameraFade(0, 1, 3, FColor::Black,true,true );
+			PC->PlayerCameraManager->StartCameraFade(0, 1, 3, FColor::Black, true, true);
 			bIsTransitioning = true;
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Level Switch Found"));
 		}

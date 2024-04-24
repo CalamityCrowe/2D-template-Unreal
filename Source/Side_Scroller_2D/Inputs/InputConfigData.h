@@ -29,4 +29,6 @@ public:
 	TObjectPtr<UInputAction>IA_PreviousSelect;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UInputAction>IA_NextSelect;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TObjectPtr<UInputAction>IA_Interact;
 };

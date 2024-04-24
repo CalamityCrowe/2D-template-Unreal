@@ -139,6 +139,7 @@ protected:
 	bool PlayDeath = true;
 
 
+
 	UWeaponAttachment* GetWeaponSpawn() const { return WeaponSpawn; }
 
 public:
@@ -179,6 +180,7 @@ public:
 	TEnumAsByte<EAttackStates> GetCurrentAttack() const { return CurrentAttack; }
 
 	UCameraComponent* GetCamera() const { return Camera; }
+
 
 protected:
 	UPROPERTY(EditDefaultsOnly)

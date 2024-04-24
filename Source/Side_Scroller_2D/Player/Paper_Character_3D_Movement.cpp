@@ -18,6 +18,7 @@ APaper_Character_3D_Movement::APaper_Character_3D_Movement()
 void APaper_Character_3D_Movement::BeginPlay()
 {
 	Super::BeginPlay();
+
 }
 
 void APaper_Character_3D_Movement::Tick(float DeltaTime)
@@ -54,11 +55,7 @@ void APaper_Character_3D_Movement::SetupPlayerInputComponent(UInputComponent* Pl
 		}
 
 	}
-	for (TObjectIterator<ABase_Level_Switch> LevelSwitch; LevelSwitch; ++LevelSwitch)
-	{
-		LevelSwitch->SetupInputs(this);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Level Switch Found"));
-	}
+
 }
 
 void APaper_Character_3D_Movement::MovePlayer(const FInputActionValue& Val)

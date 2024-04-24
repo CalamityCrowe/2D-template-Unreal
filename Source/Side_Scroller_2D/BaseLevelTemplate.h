@@ -22,21 +22,22 @@ public:
 	virtual void Tick(float DeltaTime) override;
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Map")
-		class APaperTileMapActor* m_Map;
+	class APaperTileMapActor* m_Map;
+
 	int32 m_MapWidth, m_MapHeight, m_Layers;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Map")
-		int m_TileWidth;
+	int m_TileWidth;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Tile Map")
-		int m_TileHeight;
+	int m_TileHeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Player Ref")
-		class ABasePlayer* m_PlayerRef; 
+	class ABasePlayer* m_PlayerRef;
 
 	FIntPoint m_ViewportSize;
 
 private:
-	
+
 	void FadeLevelIn();
 
 };

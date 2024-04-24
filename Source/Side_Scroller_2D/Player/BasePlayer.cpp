@@ -74,6 +74,7 @@ ABasePlayer::ABasePlayer()
 	AttackCollision->OnComponentBeginOverlap.AddDynamic(this, &ABasePlayer::AttackOverlap);
 
 
+
 }
 
 // Called when the game starts or when spawned
@@ -88,11 +89,6 @@ void ABasePlayer::BeginPlay()
 	if (APlayerController* PC = Cast<APlayerController>(GetController())) // tries to grab an instance of the player controller
 	{
 		PC->PlayerCameraManager->StartCameraFade(1, 0, 5, FColor::Black, true, false);
-	}
-
-	for (TObjectIterator<ABase_Level_Switch> LevelSwitch; LevelSwitch; ++LevelSwitch)
-	{
-		LevelSwitch->SetupInputs(this);
 	}
 
 }
