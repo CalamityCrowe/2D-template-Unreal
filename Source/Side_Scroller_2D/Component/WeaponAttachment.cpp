@@ -168,7 +168,7 @@ void UWeaponAttachment::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 		FName BeamEnd = TEXT("BeamEnd"); // this is the name of the parameter in the beam effect
 		BeamEffect->SetWorldLocation(StartPos);
 		BeamEffect->SetVectorParameter(BeamEnd, EndPos);
-		BeamEffect->SetVariableLinearColor(TEXT("ParticleColour"), FLinearColor(1, 0, 0, 1));
+		BeamEffect->SetVariableLinearColor(TEXT("ParticleColour"), BeamColor);
 
 
 		if (LineTraceMethod(StartPos, EndPos, HitResult)) // this checks if the beam has hit anything

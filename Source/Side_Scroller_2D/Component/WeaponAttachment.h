@@ -91,7 +91,8 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Niagara System", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UNiagaraSystem> MissleSpawnParticle; 
 	
-
+	UPROPERTY(EditDefaultsOnly, Category = "Niagara System", meta = (AllowPrivateAccess = true))
+	FLinearColor BeamColor;
 
 	TObjectPtr<ABasePlayer> PlayerRef;
 
