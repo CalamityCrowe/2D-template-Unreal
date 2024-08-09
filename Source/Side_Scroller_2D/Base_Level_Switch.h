@@ -61,7 +61,7 @@ private:
 
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = true))
-	TEnumAsByte<ECurrentPlatform> CurrentPlatform;
+	ECurrentPlatform CurrentPlatform;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess = true))
 	TObjectPtr<UWidgetComponent> ButtonSelect;

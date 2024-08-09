@@ -122,10 +122,10 @@ private:
 	float MaxHealth, MaxMana;
 
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states", meta = (AllowPrivateAccess = true))
-	TEnumAsByte<EAttackStates> CurrentAttack;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states", meta = (AllowPrivateAccess = true))
-	TEnumAsByte<EAttackStates> NextAttack;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states", meta = (AllowPrivateAccess = true))
+	EAttackStates CurrentAttack;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Attack states", meta = (AllowPrivateAccess = true))
+	EAttackStates NextAttack;
 
 protected:
 	bool bSliding;
@@ -177,7 +177,7 @@ public:
 	bool IsSliding() const { return bSliding; }
 	bool IsAttacking() const { return bAttacking; }
 
-	TEnumAsByte<EAttackStates> GetCurrentAttack() const { return CurrentAttack; }
+	EAttackStates GetCurrentAttack() const { return CurrentAttack; }
 
 	UCameraComponent* GetCamera() const { return Camera; }
 

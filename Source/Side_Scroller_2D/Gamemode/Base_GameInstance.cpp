@@ -6,7 +6,7 @@
 #include "MovieSceneTracksPropertyTypes.h"
 #include "GameFramework/GameUserSettings.h"
 #include "Side_Scroller_2D/Accessibility/AccessibilitySettings.h"
-#include "SlateCore/Public/Brushes/SlateColorBrush.h"
+//#include "SlateCore/Public/Brushes/SlateColorBrush.h"
 
 UBase_GameInstance::UBase_GameInstance()
 {

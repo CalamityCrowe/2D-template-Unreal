@@ -35,7 +35,7 @@ public:
 
 protected:
 	UPROPERTY(Category = "Collectible Type", EditDefaultsOnly, BluePrintReadOnly)
-		TEnumAsByte<CollectType> m_CollectType;
+		CollectType m_CollectType;
 
 	UPROPERTY(Category = "Collectible Value", EditDefaultsOnly, BluePrintReadWrite)
 		int m_CollectValue;
